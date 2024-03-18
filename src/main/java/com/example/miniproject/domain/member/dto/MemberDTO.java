@@ -1,6 +1,8 @@
 package com.example.miniproject.domain.member.dto;
 
 import com.example.miniproject.domain.member.constant.MemberRole;
+import com.example.miniproject.domain.member.constant.MemberStatus;
+import com.example.miniproject.domain.member.entity.Member;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
