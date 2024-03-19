@@ -20,25 +20,25 @@ import java.math.BigDecimal;
 @Table(name = "members")
 public class Member extends BaseEntity {
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(50) NOT NULL COMMENT '이메일'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '이메일'")
     private String email;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '비밀번호'")
     private String password;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(20) NOT NULL COMMENT '이름'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '이름'")
     private String name;
 
-    @Size(min = 6, max = 6)
-    @Column(nullable = false, columnDefinition = "VARCHAR(6) NOT NULL COMMENT '생년월일'")
+    @Size(min = 8, max = 8)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '생년월일'")
     private String birth;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(20) NOT NULL COMMENT '상태'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '상태'")
     private MemberStatus status;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(20) NOT NULL COMMENT '권한'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '권한'")
     private MemberRole role;
 
     @Column(nullable = false, columnDefinition = "DECIMAL(11,4) NOT NULL COMMENT '포인트'")
@@ -49,6 +49,21 @@ public class Member extends BaseEntity {
 
     @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL COMMENT '리프레시 토큰'")
     private String refreshToken;
+
+    @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL COMMENT '프로필 이미지'")
+    private String profileImage;
+
+    @Column(columnDefinition = "VARCHAR(255) COMMENT '우편번호'")
+    private String zipCode;
+
+    @Column(columnDefinition = "VARCHAR(255) COMMENT '국가'")
+    private String nation;
+
+    @Column(columnDefinition = "VARCHAR(255) COMMENT '도시'")
+    private String city;
+
+    @Column(columnDefinition = "VARCHAR(255) COMMENT '주소'")
+    private String address;
 
     public static Member saveAs(String email, String password, String name, String birth, String uuid) {
         return Member.builder()
@@ -69,6 +84,17 @@ public class Member extends BaseEntity {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void updateAdditionalInfo(String zipCode, String nation, String city, String address) {
+        this.zipCode = zipCode;
+        this.nation = nation;
+        this.city = city;
+        this.address = address;
     }
 
 }

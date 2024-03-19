@@ -1,4 +1,4 @@
-package com.example.miniproject.domain.product.constant;
+package com.example.miniproject.domain.hotel.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
