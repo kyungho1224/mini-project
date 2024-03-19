@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,6 +40,14 @@ public class MemberController {
       @RequestBody MemberDTO.LoginRequest request
     ) {
         return ApiResponse.ok(memberService.login(request));
+    }
+
+    @PostMapping("/upload-profile")
+    public ApiResponse<Void> uploadProfile(
+      @RequestParam(name = "file") MultipartFile[] files
+    ) throws IOException {
+        memberService.uploadProfile(files);
+        return ApiResponse.ok(HttpStatus.CREATED.value());
     }
 
 }

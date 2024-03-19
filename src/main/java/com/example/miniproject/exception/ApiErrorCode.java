@@ -14,6 +14,8 @@ public enum ApiErrorCode implements ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED.value(), "Token is invalid"),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED.value(), "Token is expired"),
     TOKEN_ERROR(HttpStatus.UNAUTHORIZED.value(), "Unknown token error"),
+    FIREBASE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase Error"),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "server error"),
     ;
 
     private final Integer httpStatusCode;
