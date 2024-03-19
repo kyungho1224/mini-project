@@ -1,9 +1,9 @@
 package com.example.miniproject.domain.order.entity;
 
 import com.example.miniproject.common.entity.BaseEntity;
+import com.example.miniproject.domain.hotel.entity.Room;
 import com.example.miniproject.domain.member.entity.Member;
 import com.example.miniproject.domain.order.constant.OrderStatus;
-import com.example.miniproject.domain.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,26 +26,65 @@ public class Order extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "product_id")
-    private Product product;
+    @JoinColumn(nullable = false, name = "room_id")
+    private Room room;
 
-    @Column(nullable = false, columnDefinition = "DATETIME NOT NULL COMMENT '체크인'")
-    private LocalDateTime checkIn;
+    @Column(nullable = false, columnDefinition = "DATETIME NOT NULL COMMENT '체크인 요청일'")
+    private LocalDate checkIn;
 
-    @Column(nullable = false, columnDefinition = "DATETIME NOT NULL COMMENT '체크아웃'")
-    private LocalDateTime checkOut;
+    @Column(nullable = false, columnDefinition = "DATETIME NOT NULL COMMENT '체크아웃 요청일'")
+    private LocalDate checkOut;
 
-    @Column(nullable = false, columnDefinition = "int NOT NULL COMMENT '어른 추가'")
-    private int adult;
+    @Column(columnDefinition = "int DEFAULT 0 COMMENT '어른 추가'")
+    private int adultCount;
 
-    @Column(nullable = false, columnDefinition = "int NOT NULL COMMENT '아이 추가'")
-    private int child;
+    @Column(columnDefinition = "int DEFAULT 0 COMMENT '아이 추가'")
+    private int childCount;
+
+    @Column(columnDefinition = "int DEFAULT 0 COMMENT '유아 추가'")
+    private int babyCount;
 
     @Column(nullable = false, columnDefinition = "DECIMAL(11,4) NOT NULL COMMENT '결제 총액'")
     private BigDecimal totalPrice;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(20) NOT NULL COMMENT '결제 상태'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '결제 상태'")
     private OrderStatus status;
+
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '요청 사항'")
+    private String comment;
+
+    @Column(columnDefinition = "VARCHAR(255) COMMENT '우편번호'")
+    private String zipCode;
+
+    @Column(columnDefinition = "VARCHAR(255) COMMENT '국가'")
+    private String nation;
+
+    @Column(columnDefinition = "VARCHAR(255) COMMENT '도시'")
+    private String city;
+
+    @Column(columnDefinition = "VARCHAR(255) COMMENT '주소'")
+    private String address;
+
+    public static Order saveAs(Member member, Room room, LocalDate checkIn, LocalDate checkOut,
+                               int adultCount, int childCount, int babyCount, BigDecimal totalPrice,
+                               String comment) {
+        return Order.builder()
+          .member(member).room(room).checkIn(checkIn).checkOut(checkOut)
+          .adultCount(adultCount).childCount(childCount).babyCount(babyCount).totalPrice(totalPrice)
+          .comment(comment)
+          .build();
+    }
+
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
+    }
+
+    public void updateAdditionalInfo(String zipCode, String nation, String city, String address) {
+        this.zipCode = zipCode;
+        this.nation = nation;
+        this.city = city;
+        this.address = address;
+    }
 
 }

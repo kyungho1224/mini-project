@@ -1,4 +1,4 @@
-package com.example.miniproject.domain.product.entity;
+package com.example.miniproject.domain.hotel.entity;
 
 import com.example.miniproject.common.entity.BaseEntity;
 import com.example.miniproject.domain.member.entity.Member;
@@ -22,6 +22,6 @@ public class Favorite extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "product_id")
-    private Product product;
+    private Hotel hotel;
 
 }
