@@ -39,7 +39,7 @@ public class SecurityConfig {
           .authorizeHttpRequests(request -> {
               request
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .requestMatchers("/api/members/join", "/api/members/login", "/api/members/verify").permitAll()
+                .requestMatchers("/api/members/join", "/api/members/login", "/api/members/verify", "/api/members/upload-profile").permitAll()
                 .anyRequest().authenticated();
           })
           .addFilterBefore(new JwtTokenFilter(jwtTokenUtil, memberRepository), UsernamePasswordAuthenticationFilter.class)
