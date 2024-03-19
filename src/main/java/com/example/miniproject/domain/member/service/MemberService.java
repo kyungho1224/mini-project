@@ -1,5 +1,6 @@
 package com.example.miniproject.domain.member.service;
 
+import com.example.miniproject.common.service.ImageService;
 import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.member.dto.TokenDTO;
@@ -12,6 +13,7 @@ import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -19,18 +21,22 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
     private final JwtTokenUtil jwtTokenUtil;
+    private final ImageService imageService;
 
     @Value("${spring.mail.username}")
     private String mailSenderUsername;
@@ -70,6 +76,14 @@ public class MemberService {
               return MemberDTO.LoginResponse.of(member, tokenDTO.getAccessToken());
           })
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    public void uploadProfile(MultipartFile[] files) throws IOException {
+        for (MultipartFile file : files) {
+            String filename = imageService.save(file);
+            String imageUrl = imageService.getImageUrl(filename);
+            log.error("MemberService uploadProfile filename: {}, imageUrl: {}", filename, imageUrl);
+        }
     }
 
     private void validatePasswordWithThrow(String password, String encodedPassword) {
