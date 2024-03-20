@@ -15,4 +15,7 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
     // TODO : 카테고리 조회 -Repository / -by ygg
     Page<Hotel> findAllByNationAndHotelStatus(Pageable pageable, Nation nation, HotelStatus hotelStatus);
 
+    // TODO : 호텔명 조회 -Repository / -by ygg
+    Page<Hotel> findByNameContainingAndHotelStatus(String name, HotelStatus hotelStatus, Pageable pageable);
+
 }

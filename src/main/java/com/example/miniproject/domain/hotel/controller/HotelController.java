@@ -74,7 +74,18 @@ public class HotelController {
     @GetMapping("/nation/{nation}")
     public ApiResponse<Page<HotelDTO.Response>> getHotelsByNation(@PathVariable Nation nation, Pageable pageable) {
         Page<HotelDTO.Response> hotelPage = hotelService.findByNation(nation, pageable);
-        return ApiResponse.ok(hotelPage);
+        return ApiResponse.ok(HttpStatus.OK.value(), hotelPage);
     }
+
+    // TODO : 호텔명 조회 -Controller / -by ygg
+    @GetMapping("/name/{name}")
+    public ApiResponse<Page<HotelDTO.Response>> searchHotelsByName(
+            @PathVariable String name,
+            Pageable pageable) {
+        Page<Hotel> hotels = hotelService.findHotelsByNameAndVisible(name, pageable);
+        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
+        return ApiResponse.ok(HttpStatus.OK.value(), responsePage);
+    }
+
 
 }

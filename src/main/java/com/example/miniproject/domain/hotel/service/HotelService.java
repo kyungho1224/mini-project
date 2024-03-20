@@ -76,4 +76,9 @@ public class HotelService {
         return hotels.map(HotelDTO.Response::of);
     }
 
+    // TODO : 호텔명 조회 -Service / -by ygg
+    public Page<Hotel> findHotelsByNameAndVisible(String name, Pageable pageable) {
+        return hotelRepository.findByNameContainingAndHotelStatus(name, HotelStatus.VISIBLE, pageable);
+    }
+
 }
