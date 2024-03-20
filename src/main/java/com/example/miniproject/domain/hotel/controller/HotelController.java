@@ -1,6 +1,7 @@
 package com.example.miniproject.domain.hotel.controller;
 
 import com.example.miniproject.common.dto.ApiResponse;
+import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.service.HotelService;
@@ -67,6 +68,13 @@ public class HotelController {
         Page<Hotel> hotelPage = hotelService.findAllVisibleHotels(pageable);
         Page<HotelDTO.Response> responsePage = hotelPage.map(HotelDTO.Response::of);
         return ApiResponse.ok(HttpStatus.OK.value(), responsePage);
+    }
+
+    // TODO : 카테고리 조회 -Controller / -by ygg
+    @GetMapping("/nation/{nation}")
+    public ApiResponse<Page<HotelDTO.Response>> getHotelsByNation(@PathVariable Nation nation, Pageable pageable) {
+        Page<HotelDTO.Response> hotelPage = hotelService.findByNation(nation, pageable);
+        return ApiResponse.ok(hotelPage);
     }
 
 }

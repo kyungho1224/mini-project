@@ -2,6 +2,7 @@ package com.example.miniproject.domain.hotel.service;
 
 import com.example.miniproject.common.service.ImageService;
 import com.example.miniproject.domain.hotel.constant.HotelStatus;
+import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.repository.HotelRepository;
@@ -69,6 +70,10 @@ public class HotelService {
         return hotelRepository.findAllByHotelStatus(pageable, HotelStatus.VISIBLE);
     }
 
-
+    // TODO : 카테고리 조회 -Service / -by ygg
+    public Page<HotelDTO.Response> findByNation(Nation nation, Pageable pageable) {
+        Page<Hotel> hotels = hotelRepository.findAllByNationAndHotelStatus(pageable, nation, HotelStatus.VISIBLE);
+        return hotels.map(HotelDTO.Response::of);
+    }
 
 }
