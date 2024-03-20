@@ -18,6 +18,8 @@ public interface ImageService {
 
     String save(MultipartFile file) throws IOException;
 
+    String upload(MultipartFile file, String filename) throws IOException;
+
     String save(BufferedImage bufferedImage, String originFilename) throws IOException;
 
     void delete(String name) throws IOException;
