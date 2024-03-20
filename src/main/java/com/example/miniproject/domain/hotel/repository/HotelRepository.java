@@ -1,6 +1,5 @@
 package com.example.miniproject.domain.hotel.repository;
 
-import com.example.miniproject.domain.hotel.constant.HotelStatus;
 import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.entity.Hotel;
 import org.springframework.data.domain.Page;

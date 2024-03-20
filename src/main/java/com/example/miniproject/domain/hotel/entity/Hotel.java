@@ -2,8 +2,8 @@ package com.example.miniproject.domain.hotel.entity;
 
 import com.example.miniproject.common.entity.BaseEntity;
 import com.example.miniproject.domain.hotel.constant.ActiveStatus;
-import com.example.miniproject.domain.hotel.constant.HotelStatus;
 import com.example.miniproject.domain.hotel.constant.Nation;
+import com.example.miniproject.domain.hotel.constant.RegisterStatus;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -32,16 +32,18 @@ public class Hotel extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '호텔명'")
     private String name;
 
-    @Column(columnDefinition = "VARCHAR(255) DEFAULT NULL COMMENT '호텔 이미지'")
-    private String imgUrl;
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '호텔 설명'")
+    private String description;
 
-    // 편의시설
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Thumbnail> thumbnails;
 
-    // 객실규칙
+    @OneToOne(fetch = FetchType.LAZY)
+    private BasicOptions basicOptions;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '노출 상태'")
-    private HotelStatus hotelStatus;
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '등록 상태'")
+    private RegisterStatus registerStatus;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '판매 상태'")
@@ -70,8 +72,10 @@ public class Hotel extends BaseEntity {
         return Hotel.builder()
           .nation(request.getNation())
           .name(request.getName())
-          .hotelStatus(HotelStatus.VISIBLE)
+          .description(request.getDescription())
+          .basicOptions(request.getBasicOptions())
           .activeStatus(ActiveStatus.ACTIVE)
+          .registerStatus(RegisterStatus.VISIBLE)
           .checkIn(request.getCheckIn())
           .checkOut(request.getCheckOut())
           .build();
@@ -97,12 +101,12 @@ public class Hotel extends BaseEntity {
         this.activeStatus = activeStatus;
     }
 
-    public void updateHotelStatus(HotelStatus hotelStatus) {
-        this.hotelStatus = hotelStatus;
+    public void addThumbnail(Thumbnail thumbnail) {
+        this.thumbnails.add(thumbnail);
     }
 
-    public void updateThumbnail(String imgUrl) {
-        this.imgUrl = imgUrl;
+    public void removeThumbnail(Thumbnail thumbnail) {
+        this.thumbnails.remove(thumbnail);
     }
 
 }

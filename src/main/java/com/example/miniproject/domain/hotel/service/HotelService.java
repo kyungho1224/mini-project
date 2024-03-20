@@ -1,9 +1,7 @@
 package com.example.miniproject.domain.hotel.service;
 
 import com.example.miniproject.common.service.ImageService;
-import com.example.miniproject.domain.hotel.constant.HotelStatus;
 import com.example.miniproject.domain.hotel.constant.Nation;
-import com.example.miniproject.domain.hotel.constant.RoomStatus;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.hotel.dto.RoomDTO;
 import com.example.miniproject.domain.hotel.entity.Hotel;
