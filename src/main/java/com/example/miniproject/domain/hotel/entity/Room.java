@@ -4,6 +4,7 @@ import com.example.miniproject.common.entity.BaseEntity;
 import com.example.miniproject.domain.hotel.constant.RoomStatus;
 import com.example.miniproject.domain.hotel.constant.RoomType;
 import com.example.miniproject.domain.hotel.dto.RoomDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +23,7 @@ import java.math.BigDecimal;
 })
 public class Room extends BaseEntity {
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
