@@ -65,18 +65,15 @@ public class HotelService {
         }
     }
 
-    // TODO : 전체 상품 조회 -Service / -by ygg
     public Page<Hotel> findAllVisibleHotels(Pageable pageable) {
         return hotelRepository.findAllByHotelStatus(pageable, HotelStatus.VISIBLE);
     }
 
-    // TODO : 카테고리 조회 -Service / -by ygg
     public Page<HotelDTO.Response> findByNation(Nation nation, Pageable pageable) {
         Page<Hotel> hotels = hotelRepository.findAllByNationAndHotelStatus(pageable, nation, HotelStatus.VISIBLE);
         return hotels.map(HotelDTO.Response::of);
     }
 
-    // TODO : 호텔명 조회 -Service / -by ygg
     public Page<Hotel> findHotelsByNameAndVisible(String name, Pageable pageable) {
         return hotelRepository.findByNameContainingAndHotelStatus(name, HotelStatus.VISIBLE, pageable);
     }

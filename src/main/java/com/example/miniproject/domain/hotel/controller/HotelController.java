@@ -62,7 +62,6 @@ public class HotelController {
         return ApiResponse.ok(HttpStatus.OK.value(), "Thumbnail upload successfully");
     }
 
-    // TODO : 전체 상품 조회 -Controller / -by ygg
     @GetMapping
     public ApiResponse<Page<HotelDTO.Response>> getAllVisibleHotels(Pageable pageable) {
         Page<Hotel> hotelPage = hotelService.findAllVisibleHotels(pageable);
@@ -70,14 +69,12 @@ public class HotelController {
         return ApiResponse.ok(HttpStatus.OK.value(), responsePage);
     }
 
-    // TODO : 카테고리 조회 -Controller / -by ygg
     @GetMapping("/nation/{nation}")
     public ApiResponse<Page<HotelDTO.Response>> getHotelsByNation(@PathVariable Nation nation, Pageable pageable) {
         Page<HotelDTO.Response> hotelPage = hotelService.findByNation(nation, pageable);
         return ApiResponse.ok(HttpStatus.OK.value(), hotelPage);
     }
 
-    // TODO : 호텔명 조회 -Controller / -by ygg
     @GetMapping("/name/{name}")
     public ApiResponse<Page<HotelDTO.Response>> searchHotelsByName(
             @PathVariable String name,
