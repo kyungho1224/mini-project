@@ -5,6 +5,7 @@ import com.example.miniproject.domain.hotel.constant.ActiveStatus;
 import com.example.miniproject.domain.hotel.constant.HotelStatus;
 import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,6 +59,7 @@ public class Hotel extends BaseEntity {
     @Column(columnDefinition = "BIGINT COMMENT '경도'")
     private Long longitude;
 
+    @JsonManagedReference
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Room> rooms;
 
