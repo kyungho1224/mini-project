@@ -1,16 +1,16 @@
 package com.example.miniproject.domain.hotel.entity;
 
 import com.example.miniproject.common.entity.BaseEntity;
-import com.example.miniproject.domain.hotel.constant.BedType;
-import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.constant.ActiveStatus;
+import com.example.miniproject.domain.hotel.constant.HotelStatus;
+import com.example.miniproject.domain.hotel.constant.Nation;
+import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -39,39 +39,64 @@ public class Hotel extends BaseEntity {
     // 객실규칙
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '판매 상태'")
-    private ActiveStatus status;
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '노출 상태'")
+    private HotelStatus hotelStatus;
 
-    @Column(nullable = false, columnDefinition = "DATETIME NOT NULL COMMENT '체크인 시간'")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '판매 상태'")
+    private ActiveStatus activeStatus;
+
+    @Column(nullable = false, columnDefinition = "TIME NOT NULL COMMENT '체크인 시간'")
     private LocalTime checkIn;
 
-    @Column(nullable = false, columnDefinition = "DATETIME NOT NULL COMMENT '체크아웃 시간'")
+    @Column(nullable = false, columnDefinition = "TIME NOT NULL COMMENT '체크아웃 시간'")
     private LocalTime checkOut;
 
-    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0 COMMENT '위도'")
+    @Column(columnDefinition = "BIGINT COMMENT '위도'")
     private Long latitude;
 
-    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0 COMMENT '경도'")
+    @Column(columnDefinition = "BIGINT COMMENT '경도'")
     private Long longitude;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Room> rooms;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Favorite> favorites;
 
-    public static Hotel saveAs(Nation nation, String name, LocalTime checkIn, LocalTime checkOut) {
+    public static Hotel saveAs(HotelDTO.Request request) {
         return Hotel.builder()
-          .nation(nation)
-          .name(name)
-          .status(ActiveStatus.ACTIVE)
-          .checkIn(checkIn)
-          .checkOut(checkOut)
+          .nation(request.getNation())
+          .name(request.getName())
+          .hotelStatus(HotelStatus.VISIBLE)
+          .activeStatus(ActiveStatus.ACTIVE)
+          .checkIn(request.getCheckIn())
+          .checkOut(request.getCheckOut())
           .build();
     }
 
-    public void updateStatus(ActiveStatus status) {
-        this.status = status;
+    public void addRoom(Room room) {
+        this.rooms.add(room);
+    }
+
+    public void removeRoom(Room room) {
+        this.rooms.remove(room);
+    }
+
+    public void addFavorite(Favorite favorite) {
+        this.favorites.add(favorite);
+    }
+
+    public void removeFavorite(Favorite favorite) {
+        this.favorites.remove(favorite);
+    }
+
+    public void updateActiveStatus(ActiveStatus activeStatus) {
+        this.activeStatus = activeStatus;
+    }
+
+    public void updateHotelStatus(HotelStatus hotelStatus) {
+        this.hotelStatus = hotelStatus;
     }
 
     public void updateThumbnail(String imgUrl) {

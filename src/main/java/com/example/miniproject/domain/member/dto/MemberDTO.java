@@ -31,7 +31,7 @@ public class MemberDTO {
         private String name;
 
         @NotBlank(message = "생년월일은 필수입니다")
-        @Size(min = 6, max = 6, message = "6자리(yyMMdd) 숫자를 입력해주세요")
+        @Size(min = 8, max = 8, message = "8자리(yyyyMMdd) 숫자를 입력해주세요")
         private String birth;
 
     }

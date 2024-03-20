@@ -35,7 +35,7 @@ public class JwtTokenUtil {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private String issueToken(String email, Long hour) {
-        var expiredLocalDateTime = LocalDateTime.now().plusMinutes(hour);
+        var expiredLocalDateTime = LocalDateTime.now().plusHours(hour);
         var expiredAt = Date.from(expiredLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
 
         Claims claims = Jwts.claims();
