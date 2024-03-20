@@ -2,10 +2,13 @@ package com.example.miniproject.domain.hotel.controller;
 
 import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
+import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.service.HotelService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -56,6 +59,14 @@ public class HotelController {
     ) {
         hotelService.uploadThumbnail(authentication.getName(), hotelId, file);
         return ApiResponse.ok(HttpStatus.OK.value(), "Thumbnail upload successfully");
+    }
+
+    // TODO : 전체 상품 조회 -Controller / -by ygg
+    @GetMapping
+    public ApiResponse<Page<HotelDTO.Response>> getAllVisibleHotels(Pageable pageable) {
+        Page<Hotel> hotelPage = hotelService.findAllVisibleHotels(pageable);
+        Page<HotelDTO.Response> responsePage = hotelPage.map(HotelDTO.Response::of);
+        return ApiResponse.ok(HttpStatus.OK.value(), responsePage);
     }
 
 }

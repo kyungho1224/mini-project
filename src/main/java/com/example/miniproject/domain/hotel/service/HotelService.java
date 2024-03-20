@@ -1,6 +1,7 @@
 package com.example.miniproject.domain.hotel.service;
 
 import com.example.miniproject.common.service.ImageService;
+import com.example.miniproject.domain.hotel.constant.HotelStatus;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.repository.HotelRepository;
@@ -11,6 +12,8 @@ import com.example.miniproject.domain.member.repository.MemberRepository;
 import com.example.miniproject.exception.ApiErrorCode;
 import com.example.miniproject.exception.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -60,5 +63,12 @@ public class HotelService {
             throw new ApiException(ApiErrorCode.NO_PERMISSION);
         }
     }
+
+    // TODO : 전체 상품 조회 -Service / -by ygg
+    public Page<Hotel> findAllVisibleHotels(Pageable pageable) {
+        return hotelRepository.findAllByHotelStatus(pageable, HotelStatus.VISIBLE);
+    }
+
+
 
 }
