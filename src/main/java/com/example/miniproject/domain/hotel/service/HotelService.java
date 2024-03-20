@@ -3,9 +3,13 @@ package com.example.miniproject.domain.hotel.service;
 import com.example.miniproject.common.service.ImageService;
 import com.example.miniproject.domain.hotel.constant.HotelStatus;
 import com.example.miniproject.domain.hotel.constant.Nation;
+import com.example.miniproject.domain.hotel.constant.RoomStatus;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
+import com.example.miniproject.domain.hotel.dto.RoomDTO;
 import com.example.miniproject.domain.hotel.entity.Hotel;
+import com.example.miniproject.domain.hotel.entity.Room;
 import com.example.miniproject.domain.hotel.repository.HotelRepository;
+import com.example.miniproject.domain.hotel.repository.RoomRepository;
 import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.entity.Member;
@@ -20,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -28,6 +34,7 @@ public class HotelService {
 
     private final MemberRepository memberRepository;
     private final HotelRepository hotelRepository;
+    private final RoomRepository roomRepository;
     private final ImageService imageService;
 
     public void create(String email, HotelDTO.Request request) {
@@ -76,6 +83,13 @@ public class HotelService {
 
     public Page<Hotel> findHotelsByNameAndVisible(String name, Pageable pageable) {
         return hotelRepository.findByNameContainingAndHotelStatus(name, HotelStatus.VISIBLE, pageable);
+    }
+
+    public List<RoomDTO.Response> findAllVisibleRoomsByHotelId(Long hotelId) {
+        List<Room> rooms = roomRepository.findAllByHotelIdAndRoomStatus(hotelId, RoomStatus.VISIBLE);
+        return rooms.stream()
+                .map(RoomDTO.Response::of)
+                .collect(Collectors.toList());
     }
 
 }
