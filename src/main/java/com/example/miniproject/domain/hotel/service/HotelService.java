@@ -87,6 +87,11 @@ public class HotelService {
 
     public List<RoomDTO.Response> findAllVisibleRoomsByHotelId(Long hotelId) {
         List<Room> rooms = roomRepository.findAllByHotelIdAndRoomStatus(hotelId, RoomStatus.VISIBLE);
+
+        if (rooms.isEmpty()) {
+            throw new ApiException(ApiErrorCode.NOT_FOUND_ROOM);
+        }
+
         return rooms.stream()
                 .map(RoomDTO.Response::of)
                 .collect(Collectors.toList());
