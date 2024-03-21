@@ -117,4 +117,8 @@ public class Hotel extends BaseEntity {
         thumbnails.remove(thumbnail);
     }
 
+    public void delete() {
+        this.registerStatus = RegisterStatus.INVISIBLE;
+    }
+
 }

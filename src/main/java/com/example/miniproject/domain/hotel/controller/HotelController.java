@@ -36,7 +36,6 @@ public class HotelController {
       @RequestParam(name = "request") String json,
       @RequestParam(name = "file", required = false) MultipartFile[] files
     ) {
-
         HotelDTO.Request request;
         try {
             request = objectMapper.readValue(json, HotelDTO.Request.class);
@@ -45,7 +44,6 @@ public class HotelController {
         }
 
         if (files != null && files.length > 0) {
-            log.error("HotelController register file count: {}", files.length);
             hotelService.create(authentication.getName(), request, files);
         } else {
             hotelService.create(authentication.getName(), request);
@@ -79,6 +77,15 @@ public class HotelController {
     public ApiResponse<List<RoomDTO.Response>> getAllVisibleRoomsByHotelId(@PathVariable Long hotelId) {
         List<RoomDTO.Response> rooms = hotelService.findAllVisibleRoomsByHotelId(hotelId);
         return ApiResponse.ok(HttpStatus.OK.value(), rooms);
+    }
+
+    @DeleteMapping("/{hotelId}")
+    public ApiResponse<Void> unregister(
+      Authentication authentication,
+      @PathVariable Long hotelId
+    ) {
+        hotelService.unregister(authentication.getName(), hotelId);
+        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
     }
 
 }

@@ -107,4 +107,14 @@ public class HotelService {
           .collect(Collectors.toList());
     }
 
+    public void unregister(String email, Long hotelId) {
+        validMasterMemberOrThrow(email);
+        hotelRepository.findByIdAndRegisterStatus(hotelId, RegisterStatus.VISIBLE)
+          .map(hotel -> {
+              hotel.delete();
+              return hotel;
+          })
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
+    }
+
 }
