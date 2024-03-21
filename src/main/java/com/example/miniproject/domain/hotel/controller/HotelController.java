@@ -87,7 +87,7 @@ public class HotelController {
         return ApiResponse.ok(HttpStatus.OK.value(), responsePage);
     }
 
-    @GetMapping("/rooms/{hotelId}")
+    @GetMapping("/{hotelId}")
     public ApiResponse<List<RoomDTO.Response>> getAllVisibleRoomsByHotelId(@PathVariable Long hotelId) {
         List<RoomDTO.Response> rooms = hotelService.findAllVisibleRoomsByHotelId(hotelId);
         return ApiResponse.ok(HttpStatus.OK.value(), rooms);
