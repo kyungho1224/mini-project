@@ -89,6 +89,9 @@ public class Hotel extends BaseEntity {
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Favorite> favorites;
 
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Notice> notices;
+
     public static Hotel saveAs(HotelDTO.Request request) {
         return Hotel.builder()
           .nation(request.getNation())
@@ -122,6 +125,10 @@ public class Hotel extends BaseEntity {
 
     public void addRoom(Room room) {
         rooms.add(room);
+    }
+
+    public void addNotice(Notice notice) {
+        notices.add(notice);
     }
 
     public void addFavorite(Favorite favorite) {

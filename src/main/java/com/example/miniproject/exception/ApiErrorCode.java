@@ -23,6 +23,8 @@ public enum ApiErrorCode implements ErrorCode {
 
     NOT_FOUND_IMAGE(HttpStatus.NOT_FOUND.value(), "Not found image"),
 
+    NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), "Not found notice"),
+
     FIREBASE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase Error"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "server error"),
     ;

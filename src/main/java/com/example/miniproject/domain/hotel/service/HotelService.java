@@ -79,6 +79,11 @@ public class HotelService {
         }
     }
 
+    public Member getMemberOrThrow(String email) {
+        return memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+    }
+
     public Hotel getVisibleHotelOrThrow(Long hotelId) {
         return hotelRepository.findByIdAndRegisterStatus(hotelId, RegisterStatus.VISIBLE)
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));

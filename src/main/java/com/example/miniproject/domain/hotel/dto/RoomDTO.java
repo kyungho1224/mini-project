@@ -98,7 +98,7 @@ public class RoomDTO {
               .standardPrice(room.getStandardPrice())
               .adultFare(room.getAdultFare())
               .childFare(room.getChildFare())
-              .thumbnails(ThumbnailDTO.RoomThumbnailsResponse.from(room.getThumbnails()))
+              .thumbnails(ThumbnailDTO.RoomThumbnailsResponse.of(room.getThumbnails()))
               .build();
         }
 
