@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum RoomStatus {
+public enum RegisterStatus {
 
     VISIBLE("등록"),
     INVISIBLE("삭제"),

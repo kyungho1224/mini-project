@@ -24,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -78,12 +80,19 @@ public class MemberService {
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
     }
 
-    public void uploadProfile(MultipartFile[] files) throws IOException {
-        for (MultipartFile file : files) {
-            String filename = imageService.save(file);
-            String imageUrl = imageService.getImageUrl(filename);
-            log.error("MemberService uploadProfile filename: {}, imageUrl: {}", filename, imageUrl);
-        }
+    public void uploadProfile(String email, MultipartFile file) {
+
+        memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
+          .map(member -> {
+              try {
+                  String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
+                  member.updateProfileImage(imgUrl);
+              } catch (IOException e) {
+                  throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION, e.getMessage());
+              }
+              return member;
+          })
+            .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
     }
 
     private void validatePasswordWithThrow(String password, String encodedPassword) {

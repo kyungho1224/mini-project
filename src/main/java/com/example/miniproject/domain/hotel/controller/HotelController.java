@@ -9,6 +9,7 @@ import com.example.miniproject.domain.hotel.service.HotelService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/hotels")
@@ -27,19 +29,13 @@ public class HotelController {
     private final HotelService hotelService;
     private final ObjectMapper objectMapper;
 
-    @GetMapping("/welcome")
-    public String welcome() {
-        return "Welcome~";
-    }
-
     @PostMapping
     public ApiResponse<String> register(
       Authentication authentication,
       @Validated
       @RequestParam(name = "request") String json,
-      @RequestParam(name = "file", required = false) MultipartFile file
+      @RequestParam(name = "file", required = false) MultipartFile[] files
     ) {
-
         HotelDTO.Request request;
         try {
             request = objectMapper.readValue(json, HotelDTO.Request.class);
@@ -47,22 +43,12 @@ public class HotelController {
             throw new RuntimeException(e);
         }
 
-        if (file != null && !file.isEmpty()) {
-            hotelService.create(authentication.getName(), request, file);
+        if (files != null && files.length > 0) {
+            hotelService.create(authentication.getName(), request, files);
         } else {
             hotelService.create(authentication.getName(), request);
         }
         return ApiResponse.ok(HttpStatus.CREATED.value(), "Registered successfully");
-    }
-
-    @PostMapping("/{hotelId}/upload")
-    public ApiResponse<String> upload(
-      Authentication authentication,
-      @PathVariable Long hotelId,
-      @RequestParam(name = "file") MultipartFile file
-    ) {
-        hotelService.uploadThumbnail(authentication.getName(), hotelId, file);
-        return ApiResponse.ok(HttpStatus.OK.value(), "Thumbnail upload successfully");
     }
 
     @GetMapping
@@ -91,6 +77,15 @@ public class HotelController {
     public ApiResponse<List<RoomDTO.Response>> getAllVisibleRoomsByHotelId(@PathVariable Long hotelId) {
         List<RoomDTO.Response> rooms = hotelService.findAllVisibleRoomsByHotelId(hotelId);
         return ApiResponse.ok(HttpStatus.OK.value(), rooms);
+    }
+
+    @DeleteMapping("/{hotelId}")
+    public ApiResponse<Void> unregister(
+      Authentication authentication,
+      @PathVariable Long hotelId
+    ) {
+        hotelService.unregister(authentication.getName(), hotelId);
+        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
     }
 
 }

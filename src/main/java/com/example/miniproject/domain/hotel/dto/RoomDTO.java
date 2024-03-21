@@ -1,6 +1,6 @@
 package com.example.miniproject.domain.hotel.dto;
 
-import com.example.miniproject.domain.hotel.constant.RoomStatus;
+import com.example.miniproject.domain.hotel.constant.ActiveStatus;
 import com.example.miniproject.domain.hotel.constant.RoomType;
 import com.example.miniproject.domain.hotel.entity.Room;
 import jakarta.validation.constraints.NotBlank;
@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RoomDTO {
 
@@ -22,23 +24,31 @@ public class RoomDTO {
         @NotNull(message = "객실 타입은 필수 입력입니다")
         private RoomType type;
 
+        @NotNull(message = "판매 상태는 필수 입력입니다")
+        private ActiveStatus activeStatus;
+
         @NotNull(message = "침대 수는 필수 입력입니다")
         private int bedCount;
 
-        private int minCapacity;
+        @NotNull(message = "기준 인원수는 필수 입력입니다")
+        private int standardCapacity;
 
         @NotNull(message = "최대 인원수는 필수 입력입니다")
-        private int maxCapacity;
+        private int maximumCapacity;
 
         @NotBlank(message = "뷰 타입은 필수 입력입니다")
         private String viewType;
 
-        @NotNull(message = "가격은 필수 입력입니다")
-        private BigDecimal price;
+        @NotNull(message = "표준 가격은 필수 입력입니다")
+        private BigDecimal standardPrice;
+
+        @NotNull(message = "성인 요금은 필수 입력입니다")
+        private BigDecimal adultFare;
+
+        @NotNull(message = "어린이 요금은 필수 입력입니다")
+        private BigDecimal childFare;
 
         private BigDecimal discountRate;
-
-        private String imgUrl;
 
     }
 
@@ -48,39 +58,51 @@ public class RoomDTO {
     @Getter
     public static class Response {
 
+        private Long hotelId;
+
         private Long id;
 
         private RoomType type;
 
-        private RoomStatus roomStatus;
+        private ActiveStatus activeStatus;
 
         private int bedCount;
 
-        private int minCapacity;
+        private int standardCapacity;
 
-        private int maxCapacity;
+        private int maximumCapacity;
 
         private String viewType;
 
-        private BigDecimal price;
+        private BigDecimal standardPrice;
+
+        private BigDecimal adultFare;
+
+        private BigDecimal childFare;
 
         private BigDecimal discountRate;
 
-        private String imgUrl;
+        private List<ThumbnailDTO.RoomThumbnailsResponse> thumbnails;
 
         public static Response of(Room room) {
             return Response.builder()
+              .hotelId(room.getHotel().getId())
               .id(room.getId())
               .type(room.getType())
-              .roomStatus(room.getRoomStatus())
+              .activeStatus(room.getActiveStatus())
               .bedCount(room.getBedCount())
-              .minCapacity(room.getMinCapacity())
-              .maxCapacity(room.getMaxCapacity())
+              .standardCapacity(room.getStandardCapacity())
+              .maximumCapacity(room.getMaximumCapacity())
               .viewType(room.getViewType())
-              .price(room.getPrice())
-              .discountRate(room.getDiscountRate())
-              .imgUrl(room.getImgUrl())
+              .standardPrice(room.getStandardPrice())
+              .adultFare(room.getAdultFare())
+              .childFare(room.getChildFare())
+              .thumbnails(ThumbnailDTO.RoomThumbnailsResponse.from(room.getThumbnails()))
               .build();
+        }
+
+        public static List<Response> of(List<Room> rooms) {
+            return rooms.stream().map(Response::of).collect(Collectors.toList());
         }
 
     }

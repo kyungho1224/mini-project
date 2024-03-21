@@ -26,7 +26,7 @@ public class RoomController {
       @PathVariable Long hotelId,
       @Validated
       @RequestParam(name = "request") String json,
-      @RequestParam(name = "file", required = false) MultipartFile file
+      @RequestParam(name = "file", required = false) MultipartFile[] files
     ) {
 
         RoomDTO.Request request;
@@ -36,24 +36,13 @@ public class RoomController {
             throw new RuntimeException(e);
         }
 
-        if (file != null && !file.isEmpty()) {
-            roomService.create(authentication.getName(), hotelId, request, file);
+        if (files != null && files.length > 0) {
+            roomService.create(authentication.getName(), hotelId, request, files);
         } else {
             roomService.create(authentication.getName(), hotelId, request);
         }
 
         return ApiResponse.ok(HttpStatus.CREATED.value(), "Registered successfully");
-    }
-
-    @PostMapping("/{roomId}/upload")
-    public ApiResponse<String> upload(
-      Authentication authentication,
-      @PathVariable Long hotelId,
-      @PathVariable Long roomId,
-      @RequestParam(name = "file") MultipartFile file
-    ) {
-        roomService.uploadThumbnail(authentication.getName(), hotelId, roomId, file);
-        return ApiResponse.ok(HttpStatus.OK.value(), "Thumbnail upload successfully");
     }
 
 }
