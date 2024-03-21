@@ -4,14 +4,17 @@ import com.example.miniproject.common.service.ImageService;
 import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.constant.RegisterStatus;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
+import com.example.miniproject.domain.hotel.entity.Favorite;
 import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.entity.HotelThumbnail;
+import com.example.miniproject.domain.hotel.repository.FavoriteRepository;
 import com.example.miniproject.domain.hotel.repository.HotelRepository;
 import com.example.miniproject.domain.hotel.repository.HotelThumbnailRepository;
 import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.entity.Member;
 import com.example.miniproject.domain.member.repository.MemberRepository;
+import com.example.miniproject.domain.member.service.MemberService;
 import com.example.miniproject.exception.ApiErrorCode;
 import com.example.miniproject.exception.ApiException;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +35,11 @@ import java.util.stream.Collectors;
 public class HotelService {
 
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final HotelRepository hotelRepository;
     private final HotelThumbnailRepository hotelThumbnailRepository;
     private final ImageService imageService;
+    private final FavoriteRepository favoriteRepository;
 
     public void create(String email, HotelDTO.Request request) {
         validMasterMemberOrThrow(email);
@@ -141,6 +146,16 @@ public class HotelService {
               return hotel;
           })
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
+    }
+
+    public void toggleFavorite(String email, Long hotelId) {
+        Member validMember = memberService.getValidMemberOrThrow(email);
+        Hotel hotel = getVisibleHotelOrThrow(hotelId);
+        favoriteRepository.findByMemberIdAndHotelId(validMember.getId(), hotel.getId())
+          .ifPresentOrElse(hotel::removeFavorite, () -> {
+              Favorite savedFavorite = favoriteRepository.save(Favorite.saveAs(validMember, hotel));
+              hotel.addFavorite(savedFavorite);
+          });
     }
 
 }
