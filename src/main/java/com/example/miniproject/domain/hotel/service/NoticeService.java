@@ -5,7 +5,6 @@ import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.entity.Notice;
 import com.example.miniproject.domain.hotel.repository.NoticeRepository;
 import com.example.miniproject.domain.member.entity.Member;
-import com.example.miniproject.domain.member.service.MemberService;
 import com.example.miniproject.exception.ApiErrorCode;
 import com.example.miniproject.exception.ApiException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final MemberService memberService;
     private final HotelService hotelService;
 
     public void create(String email, Long hotelId, NoticeDTO.Request request) {
