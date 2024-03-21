@@ -21,12 +21,12 @@ public class ThumbnailDTO {
 
         String imgUrl;
 
-        public static HotelThumbnailsResponse from(HotelThumbnail hotelThumbnail) {
+        public static HotelThumbnailsResponse of(HotelThumbnail hotelThumbnail) {
             return new HotelThumbnailsResponse(hotelThumbnail.getId(), hotelThumbnail.getImgUrl());
         }
 
-        public static List<HotelThumbnailsResponse> from(List<HotelThumbnail> hotelThumbnails) {
-            return hotelThumbnails.stream().map(HotelThumbnailsResponse::from).collect(Collectors.toList());
+        public static List<HotelThumbnailsResponse> of(List<HotelThumbnail> hotelThumbnails) {
+            return hotelThumbnails.stream().map(HotelThumbnailsResponse::of).collect(Collectors.toList());
         }
 
     }
@@ -40,12 +40,12 @@ public class ThumbnailDTO {
 
         String imgUrl;
 
-        public static RoomThumbnailsResponse from(RoomThumbnail roomThumbnail) {
+        public static RoomThumbnailsResponse of(RoomThumbnail roomThumbnail) {
             return new RoomThumbnailsResponse(roomThumbnail.getId(), roomThumbnail.getImgUrl());
         }
 
-        public static List<RoomThumbnailsResponse> from(List<RoomThumbnail> roomThumbnails) {
-            return roomThumbnails.stream().map(RoomThumbnailsResponse::from).collect(Collectors.toList());
+        public static List<RoomThumbnailsResponse> of(List<RoomThumbnail> roomThumbnails) {
+            return roomThumbnails.stream().map(RoomThumbnailsResponse::of).collect(Collectors.toList());
         }
     }
 
