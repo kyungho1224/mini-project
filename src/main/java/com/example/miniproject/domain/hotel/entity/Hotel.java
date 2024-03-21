@@ -106,32 +106,30 @@ public class Hotel extends BaseEntity {
           .build();
     }
 
-    public void addRoom(Room room) {
-        rooms.add(room);
+    public void updateData(HotelDTO.Request request) {
+        this.nation = request.getNation();
+        this.name = request.getName();
+        this.description = request.getDescription();
+        this.basicOptions = request.getBasicOptions();
+        this.checkIn = request.getCheckIn();
+        this.checkOut = request.getCheckOut();
+        this.smokingRule = request.getSmokingRule();
+        this.petRule = request.getPetRule();
+        this.poolOpeningTime = request.getPoolOpeningTime();
+        this.poolClosingTime = request.getPoolClosingTime();
+        this.activeStatus = request.getActiveStatus();
     }
 
-    public void removeRoom(Room room) {
-        rooms.remove(room);
+    public void addRoom(Room room) {
+        rooms.add(room);
     }
 
     public void addFavorite(Favorite favorite) {
         favorites.add(favorite);
     }
 
-    public void removeFavorite(Favorite favorite) {
-        favorites.remove(favorite);
-    }
-
-    public void updateActiveStatus(ActiveStatus activeStatus) {
-        this.activeStatus = activeStatus;
-    }
-
     public void addThumbnail(HotelThumbnail thumbnail) {
         thumbnails.add(thumbnail);
-    }
-
-    public void removeThumbnail(HotelThumbnail thumbnail) {
-        thumbnails.remove(thumbnail);
     }
 
     public void delete() {

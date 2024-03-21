@@ -2,6 +2,7 @@ package com.example.miniproject.domain.hotel.service;
 
 import com.example.miniproject.common.service.ImageService;
 import com.example.miniproject.domain.hotel.constant.RegisterStatus;
+import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.hotel.dto.RoomDTO;
 import com.example.miniproject.domain.hotel.entity.Room;
 import com.example.miniproject.domain.hotel.entity.RoomThumbnail;

@@ -25,4 +25,8 @@ public class HotelThumbnail extends BaseEntity {
         return new HotelThumbnail(hotel, imgUrl);
     }
 
+    public void updateThumbnail(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
 }

@@ -75,6 +75,30 @@ public class HotelController {
         return ApiResponse.ok(HttpStatus.OK.value(), hotelService.findHotelById(hotelId));
     }
 
+    @PatchMapping("{hotelId}")
+    public ApiResponse<Void> updateData(
+      Authentication authentication,
+      @PathVariable Long hotelId,
+      @Validated
+      @RequestBody HotelDTO.Request request
+    ) {
+        hotelService.updateData(authentication.getName(), hotelId, request);
+        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+    }
+
+    @PatchMapping("{hotelId}/thumbnails/{thumbnailId}")
+    public ApiResponse<Void> updateThumbnail(
+      Authentication authentication,
+      @PathVariable Long hotelId,
+      @PathVariable Long thumbnailId,
+      @RequestParam(name = "file", required = false) MultipartFile file
+    ) {
+        if (file != null) {
+            hotelService.updateThumbnail(authentication.getName(), hotelId, thumbnailId, file);
+        }
+        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+    }
+
     @DeleteMapping("/{hotelId}")
     public ApiResponse<Void> unregister(
       Authentication authentication,

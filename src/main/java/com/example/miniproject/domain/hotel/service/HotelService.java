@@ -108,4 +108,34 @@ public class HotelService {
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
     }
 
+    public void updateData(String email, Long hotelId, HotelDTO.Request request) {
+        validMasterMemberOrThrow(email);
+        hotelRepository.findByIdAndRegisterStatus(hotelId, RegisterStatus.VISIBLE)
+          .map(hotel -> {
+              hotel.updateData(request);
+              return hotel;
+          })
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
+    }
+
+    public void updateThumbnail(String email, Long hotelId, Long thumbnailId, MultipartFile file) {
+        validMasterMemberOrThrow(email);
+        hotelRepository.findByIdAndRegisterStatus(hotelId, RegisterStatus.VISIBLE)
+          .map(hotel -> {
+              hotelThumbnailRepository.findById(thumbnailId)
+                .map(thumbnail -> {
+                    try {
+                        String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
+                        thumbnail.updateThumbnail(imgUrl);
+                    } catch (IOException e) {
+                        throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION, e.getMessage());
+                    }
+                    return thumbnail;
+                })
+                .orElseThrow();
+              return hotel;
+          })
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
+    }
+
 }
