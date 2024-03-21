@@ -133,4 +133,11 @@ public class MemberService {
 
     }
 
+    @Transactional(readOnly = true)
+    public MemberDTO.MyPageResponse getMyPageInfo(String email) {
+        return memberRepository.findByEmail(email)
+                .map(MemberDTO.MyPageResponse::of)
+                .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+    }
+
 }
