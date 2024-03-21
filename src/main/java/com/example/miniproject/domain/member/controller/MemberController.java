@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RequiredArgsConstructor
 @RestController
@@ -50,6 +51,19 @@ public class MemberController {
     ) {
         memberService.uploadProfile(authentication.getName(), file);
         return ApiResponse.ok(HttpStatus.CREATED.value());
+    }
+
+    @GetMapping("/my-info")
+    public ApiResponse<MemberDTO.MyPageResponse> getProfile(Principal principal) {
+        String email = principal.getName();
+        MemberDTO.MyPageResponse myPage = memberService.getMyPageInfo(email);
+        return ApiResponse.ok(HttpStatus.OK.value(), myPage);
+    }
+
+    @PostMapping("/my-info")
+    public ApiResponse<?> updateMemberInfo(@RequestBody MemberDTO.UpdateMemberRequest updateRequest) {
+        memberService.updateMemberInfo(updateRequest);
+        return ApiResponse.ok(HttpStatus.OK.value());
     }
 
 }
