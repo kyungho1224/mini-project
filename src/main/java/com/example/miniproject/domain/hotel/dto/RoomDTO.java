@@ -1,7 +1,9 @@
 package com.example.miniproject.domain.hotel.dto;
 
 import com.example.miniproject.domain.hotel.constant.ActiveStatus;
+import com.example.miniproject.domain.hotel.constant.BedType;
 import com.example.miniproject.domain.hotel.constant.RoomType;
+import com.example.miniproject.domain.hotel.constant.ViewType;
 import com.example.miniproject.domain.hotel.entity.Room;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,8 +29,8 @@ public class RoomDTO {
         @NotNull(message = "판매 상태는 필수 입력입니다")
         private ActiveStatus activeStatus;
 
-        @NotNull(message = "침대 수는 필수 입력입니다")
-        private int bedCount;
+        @NotNull(message = "침대 타입은 필수 입력입니다")
+        private BedType bedType;
 
         @NotNull(message = "기준 인원수는 필수 입력입니다")
         private int standardCapacity;
@@ -37,7 +39,7 @@ public class RoomDTO {
         private int maximumCapacity;
 
         @NotBlank(message = "뷰 타입은 필수 입력입니다")
-        private String viewType;
+        private ViewType viewType;
 
         @NotNull(message = "표준 가격은 필수 입력입니다")
         private BigDecimal standardPrice;
@@ -66,13 +68,13 @@ public class RoomDTO {
 
         private ActiveStatus activeStatus;
 
-        private int bedCount;
+        private BedType bedType;
 
         private int standardCapacity;
 
         private int maximumCapacity;
 
-        private String viewType;
+        private ViewType viewType;
 
         private BigDecimal standardPrice;
 
@@ -90,7 +92,7 @@ public class RoomDTO {
               .id(room.getId())
               .type(room.getType())
               .activeStatus(room.getActiveStatus())
-              .bedCount(room.getBedCount())
+              .bedType(room.getBedType())
               .standardCapacity(room.getStandardCapacity())
               .maximumCapacity(room.getMaximumCapacity())
               .viewType(room.getViewType())

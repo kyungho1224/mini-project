@@ -1,9 +1,8 @@
 package com.example.miniproject.domain.hotel.entity;
 
 import com.example.miniproject.common.entity.BaseEntity;
-import com.example.miniproject.domain.hotel.constant.ActiveStatus;
-import com.example.miniproject.domain.hotel.constant.Nation;
-import com.example.miniproject.domain.hotel.constant.RegisterStatus;
+import com.example.miniproject.domain.hotel.constant.*;
+import com.example.miniproject.domain.hotel.dto.BasicOptions;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -44,24 +43,38 @@ public class Hotel extends BaseEntity {
     @Builder.Default
     private List<HotelThumbnail> thumbnails = new ArrayList<>();
 
+    @Column(nullable = false, columnDefinition = "TIME NOT NULL COMMENT '체크인'")
+    private LocalTime checkIn;
+
+    @Column(nullable = false, columnDefinition = "TIME NOT NULL COMMENT '체크아웃'")
+    private LocalTime checkOut;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '흡연 규칙'")
+    private SmokingRule smokingRule;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '애완동물 규칙'")
+    private PetRule petRule;
+
+    @Column(columnDefinition = "TIME DEFAULT NULL COMMENT '수영장 개장 시간'")
+    private LocalTime poolOpeningTime;
+
+    @Column(columnDefinition = "TIME DEFAULT NULL COMMENT '수영장 폐장 시간'")
+    private LocalTime poolClosingTime;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @JsonSubTypes.Type(JsonType.class)
     @Column(nullable = false, columnDefinition = "json")
     private BasicOptions basicOptions;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '등록 상태'")
-    private RegisterStatus registerStatus;
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '판매 상태'")
     private ActiveStatus activeStatus;
 
-    @Column(nullable = false, columnDefinition = "TIME NOT NULL COMMENT '체크인 시간'")
-    private LocalTime checkIn;
-
-    @Column(nullable = false, columnDefinition = "TIME NOT NULL COMMENT '체크아웃 시간'")
-    private LocalTime checkOut;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '등록 상태'")
+    private RegisterStatus registerStatus;
 
     @Column(columnDefinition = "BIGINT COMMENT '위도'")
     private Long latitude;
@@ -82,10 +95,14 @@ public class Hotel extends BaseEntity {
           .name(request.getName())
           .description(request.getDescription())
           .basicOptions(request.getBasicOptions())
-          .activeStatus(ActiveStatus.ACTIVE)
-          .registerStatus(RegisterStatus.VISIBLE)
           .checkIn(request.getCheckIn())
           .checkOut(request.getCheckOut())
+          .smokingRule(request.getSmokingRule())
+          .petRule(request.getPetRule())
+          .poolOpeningTime(request.getPoolOpeningTime())
+          .poolClosingTime(request.getPoolClosingTime())
+          .activeStatus(request.getActiveStatus())
+          .registerStatus(RegisterStatus.VISIBLE)
           .build();
     }
 
