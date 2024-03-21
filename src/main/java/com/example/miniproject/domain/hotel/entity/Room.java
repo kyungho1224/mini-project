@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -21,7 +22,7 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "rooms", indexes = {
-  @Index(name = "max_capacity_idx", columnList = "max_capacity")
+  @Index(name = "maximum_capacity_idx", columnList = "maximum_capacity")
 })
 public class Room extends BaseEntity {
 
@@ -48,7 +49,7 @@ public class Room extends BaseEntity {
     @Column(nullable = false, columnDefinition = "int DEFAULT 0 COMMENT '표준 인원'")
     private int standardCapacity;
 
-    @Column(nullable = false, columnDefinition = "int NOT NULL COMMENT '최대 인원'")
+    @Column(name = "maximum_capacity", nullable = false, columnDefinition = "int NOT NULL COMMENT '최대 인원'")
     private int maximumCapacity;
 
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '뷰 타입'")
@@ -67,7 +68,8 @@ public class Room extends BaseEntity {
     private BigDecimal discountRate;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Thumbnail> thumbnails;
+    @Builder.Default
+    private List<RoomThumbnail> thumbnails = new ArrayList<>();
 
     public static Room saveAs(Hotel hotel, RoomDTO.Request request) {
         return Room.builder()
@@ -85,12 +87,12 @@ public class Room extends BaseEntity {
           .build();
     }
 
-    public void addThumbnail(Thumbnail thumbnail) {
-        this.thumbnails.add(thumbnail);
+    public void addThumbnail(RoomThumbnail thumbnail) {
+        thumbnails.add(thumbnail);
     }
 
-    public void removeThumbnail(Thumbnail thumbnail) {
-        this.thumbnails.remove(thumbnail);
+    public void removeThumbnail(RoomThumbnail thumbnail) {
+        thumbnails.remove(thumbnail);
     }
 
 }

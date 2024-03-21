@@ -1,4 +1,5 @@
-package com.example.miniproject.domain.hotel.entity;
+package com.example.miniproject.domain.hotel.dto;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Getter
-public class BasicOptions {
+public class BasicOptionsDTO {
 
     private boolean swimmingPool;
 
@@ -38,5 +39,15 @@ public class BasicOptions {
     private boolean tv;
 
     private boolean safetyDepositBox;
+
+//    public static BasicOptionsDTO of(BasicOptions entity) {
+//        return new BasicOptionsDTO(
+//          entity.isSwimmingPool(), entity.isBreakFast(), entity.isWirelessInternet(),
+//          entity.isDryCleaning(), entity.isStorageService(), entity.isConvenienceStore(),
+//          entity.isIroningTools(), entity.isWakeupCall(), entity.isMiniBar(),
+//          entity.isShowerRoom(), entity.isAirConditioner(), entity.isTable(),
+//          entity.isTv(), entity.isSafetyDepositBox()
+//        );
+//    }
 
 }

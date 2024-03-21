@@ -3,7 +3,8 @@ package com.example.miniproject.domain.hotel.dto;
 import com.example.miniproject.domain.hotel.constant.ActiveStatus;
 import com.example.miniproject.domain.hotel.constant.RoomType;
 import com.example.miniproject.domain.hotel.entity.Room;
-import com.example.miniproject.domain.hotel.entity.Thumbnail;
+import com.example.miniproject.domain.hotel.entity.HotelThumbnail;
+import com.example.miniproject.domain.hotel.entity.RoomThumbnail;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -82,7 +83,7 @@ public class RoomDTO {
 
         private BigDecimal discountRate;
 
-        private List<Thumbnail> thumbnails;
+        private List<RoomThumbnail> thumbnails;
 
         public static Response of(Room room) {
             return Response.builder()

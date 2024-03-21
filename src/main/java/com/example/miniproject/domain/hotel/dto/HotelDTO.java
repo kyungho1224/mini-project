@@ -5,7 +5,7 @@ import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.entity.BasicOptions;
 import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.entity.Room;
-import com.example.miniproject.domain.hotel.entity.Thumbnail;
+import com.example.miniproject.domain.hotel.entity.HotelThumbnail;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -60,7 +60,7 @@ public class HotelDTO {
 
         private String description;
 
-        private List<Thumbnail> thumbnails;
+        private List<HotelThumbnail> thumbnails;
 
         private BasicOptions basicOptions;
 

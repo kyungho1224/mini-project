@@ -6,13 +6,18 @@ import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.constant.RegisterStatus;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -36,9 +41,12 @@ public class Hotel extends BaseEntity {
     private String description;
 
     @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Thumbnail> thumbnails;
+    @Builder.Default
+    private List<HotelThumbnail> thumbnails = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @JsonSubTypes.Type(JsonType.class)
+    @Column(nullable = false, columnDefinition = "json")
     private BasicOptions basicOptions;
 
     @Enumerated(EnumType.STRING)
@@ -82,31 +90,31 @@ public class Hotel extends BaseEntity {
     }
 
     public void addRoom(Room room) {
-        this.rooms.add(room);
+        rooms.add(room);
     }
 
     public void removeRoom(Room room) {
-        this.rooms.remove(room);
+        rooms.remove(room);
     }
 
     public void addFavorite(Favorite favorite) {
-        this.favorites.add(favorite);
+        favorites.add(favorite);
     }
 
     public void removeFavorite(Favorite favorite) {
-        this.favorites.remove(favorite);
+        favorites.remove(favorite);
     }
 
     public void updateActiveStatus(ActiveStatus activeStatus) {
         this.activeStatus = activeStatus;
     }
 
-    public void addThumbnail(Thumbnail thumbnail) {
-        this.thumbnails.add(thumbnail);
+    public void addThumbnail(HotelThumbnail thumbnail) {
+        thumbnails.add(thumbnail);
     }
 
-    public void removeThumbnail(Thumbnail thumbnail) {
-        this.thumbnails.remove(thumbnail);
+    public void removeThumbnail(HotelThumbnail thumbnail) {
+        thumbnails.remove(thumbnail);
     }
 
 }
