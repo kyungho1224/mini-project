@@ -164,4 +164,16 @@ public class MemberDTO {
 
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class UpdateMemberRequest {
+        private Long id;
+        private String password;
+        private String address;
+        private String city;
+        private String nation;
+        private String zipCode;
+    }
+
 }

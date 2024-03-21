@@ -18,15 +18,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -117,6 +117,20 @@ public class MemberService {
         messageHelper.setText(body, true);
         messageHelper.setFrom(new InternetAddress(mailSenderUsername, "MASTER"));
         mailSender.send(mimeMessage);
+    }
+
+    public void updateMemberInfo(MemberDTO.UpdateMemberRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+
+        validatePasswordWithThrow(request.getPassword(), member.getPassword());
+
+        member.updateAdditionalInfo(request.getZipCode(), request.getNation(), request.getCity(), request.getAddress());
+        memberRepository.save(member);
+
     }
 
 }
