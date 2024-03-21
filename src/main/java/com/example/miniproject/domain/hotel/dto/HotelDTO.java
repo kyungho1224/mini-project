@@ -2,8 +2,12 @@ package com.example.miniproject.domain.hotel.dto;
 
 import com.example.miniproject.domain.hotel.constant.ActiveStatus;
 import com.example.miniproject.domain.hotel.constant.Nation;
-import com.example.miniproject.domain.hotel.entity.BasicOptions;
+import com.example.miniproject.domain.hotel.constant.PetRule;
+import com.example.miniproject.domain.hotel.constant.SmokingRule;
 import com.example.miniproject.domain.hotel.entity.Hotel;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -33,14 +37,24 @@ public class HotelDTO {
         @NotNull(message = "기본 옵션은 필수 입력입니다")
         private BasicOptions basicOptions;
 
-        @NotNull(message = "판매 상태는 필수 입력입니다")
-        private ActiveStatus activeStatus;
-
         @NotNull(message = "체크인 시간은 필수 입력입니다")
         private LocalTime checkIn;
 
         @NotNull(message = "체크아웃 시간은 필수 입력입니다")
         private LocalTime checkOut;
+
+        @NotNull(message = "흡연 규칙은 필수 입력입니다")
+        private SmokingRule smokingRule;
+
+        @NotNull(message = "애완동물 규칙은 필수 입력입니다")
+        private PetRule petRule;
+
+        private LocalTime poolOpeningTime;
+
+        private LocalTime poolClosingTime;
+
+        @NotNull(message = "판매 상태는 필수 입력입니다")
+        private ActiveStatus activeStatus;
 
     }
 
@@ -62,11 +76,19 @@ public class HotelDTO {
 
         private BasicOptions basicOptions;
 
-        private ActiveStatus activeStatus;
-
         private LocalTime checkIn;
 
         private LocalTime checkOut;
+
+        private SmokingRule smokingRule;
+
+        private PetRule petRule;
+
+        private LocalTime poolOpeningTime;
+
+        private LocalTime poolClosingTime;
+
+        private ActiveStatus activeStatus;
 
         private Long latitude;
 
@@ -82,9 +104,13 @@ public class HotelDTO {
               .description(hotel.getDescription())
               .thumbnails(ThumbnailDTO.HotelThumbnailsResponse.from(hotel.getThumbnails()))
               .basicOptions(hotel.getBasicOptions())
-              .activeStatus(hotel.getActiveStatus())
               .checkIn(hotel.getCheckIn())
               .checkOut(hotel.getCheckOut())
+              .smokingRule(hotel.getSmokingRule())
+              .petRule(hotel.getPetRule())
+              .poolOpeningTime(hotel.getPoolOpeningTime())
+              .poolClosingTime(hotel.getPoolClosingTime())
+              .activeStatus(hotel.getActiveStatus())
               .latitude(hotel.getLatitude())
               .longitude(hotel.getLongitude())
               .rooms(RoomDTO.Response.of(hotel.getRooms()))

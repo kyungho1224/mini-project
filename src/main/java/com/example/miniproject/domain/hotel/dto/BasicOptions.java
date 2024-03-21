@@ -1,16 +1,17 @@
 package com.example.miniproject.domain.hotel.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
-public class BasicOptionsDTO {
+public class BasicOptions implements Serializable {
 
     private boolean swimmingPool;
 
@@ -39,15 +40,5 @@ public class BasicOptionsDTO {
     private boolean tv;
 
     private boolean safetyDepositBox;
-
-//    public static BasicOptionsDTO of(BasicOptions entity) {
-//        return new BasicOptionsDTO(
-//          entity.isSwimmingPool(), entity.isBreakFast(), entity.isWirelessInternet(),
-//          entity.isDryCleaning(), entity.isStorageService(), entity.isConvenienceStore(),
-//          entity.isIroningTools(), entity.isWakeupCall(), entity.isMiniBar(),
-//          entity.isShowerRoom(), entity.isAirConditioner(), entity.isTable(),
-//          entity.isTv(), entity.isSafetyDepositBox()
-//        );
-//    }
 
 }

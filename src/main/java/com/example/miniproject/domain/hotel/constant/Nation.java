@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum Nation {
 
-    KOREA("한국"),
-    JAPAN("일본"),
-    CHINA("중국"),
+    THAILAND("태국"),
+    VIETNAM("베트남"),
+    PHILIPPINES("필리핀"),
+    MALAYSIA("말레이시아"),
+    TAIWAN("대만"),
     ;
 
     private final String name;

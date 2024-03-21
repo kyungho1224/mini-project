@@ -1,9 +1,7 @@
 package com.example.miniproject.domain.hotel.entity;
 
 import com.example.miniproject.common.entity.BaseEntity;
-import com.example.miniproject.domain.hotel.constant.ActiveStatus;
-import com.example.miniproject.domain.hotel.constant.RegisterStatus;
-import com.example.miniproject.domain.hotel.constant.RoomType;
+import com.example.miniproject.domain.hotel.constant.*;
 import com.example.miniproject.domain.hotel.dto.RoomDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -44,7 +42,7 @@ public class Room extends BaseEntity {
     private ActiveStatus activeStatus;
 
     @Column(nullable = false, columnDefinition = "int NOT NULL COMMENT '침대 수'")
-    private int bedCount;
+    private BedType bedType;
 
     @Column(nullable = false, columnDefinition = "int DEFAULT 0 COMMENT '표준 인원'")
     private int standardCapacity;
@@ -52,8 +50,9 @@ public class Room extends BaseEntity {
     @Column(name = "maximum_capacity", nullable = false, columnDefinition = "int NOT NULL COMMENT '최대 인원'")
     private int maximumCapacity;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '뷰 타입'")
-    private String viewType;
+    private ViewType viewType;
 
     @Column(nullable = false, columnDefinition = "DECIMAL(11,4) NOT NULL COMMENT '표준 가격'")
     private BigDecimal standardPrice;
@@ -77,7 +76,7 @@ public class Room extends BaseEntity {
           .type(request.getType())
           .activeStatus(request.getActiveStatus())
           .registerStatus(RegisterStatus.VISIBLE)
-          .bedCount(request.getBedCount())
+          .bedType(request.getBedType())
           .standardCapacity(request.getStandardCapacity())
           .maximumCapacity(request.getMaximumCapacity())
           .viewType(request.getViewType())
