@@ -21,6 +21,8 @@ public enum ApiErrorCode implements ErrorCode {
 
     NOT_FOUND_ROOM(HttpStatus.NOT_FOUND.value(), "Not found room"),
 
+    NOT_FOUND_IMAGE(HttpStatus.NOT_FOUND.value(), "Not found image"),
+
     FIREBASE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase Error"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "server error"),
     ;

@@ -82,4 +82,38 @@ public class RoomService {
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
     }
 
+    public void updateData(String email, Long hotelId, Long roomId, RoomDTO.Request request) {
+        hotelService.validMasterMemberOrThrow(email);
+        hotelService.getVisibleHotelOrThrow(hotelId);
+        roomRepository.findByIdAndRegisterStatus(roomId, RegisterStatus.VISIBLE)
+          .map(room -> {
+              room.updateData(request);
+              return room;
+          })
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ROOM));
+    }
+
+    public void updateThumbnail(String email, Long hotelId, Long roomId, Long thumbnailId, MultipartFile file) {
+        hotelService.validMasterMemberOrThrow(email);
+        hotelService.getVisibleHotelOrThrow(hotelId);
+        checkVisibleRoomOrThrow(roomId);
+
+        roomThumbnailRepository.findById(thumbnailId)
+          .map(thumbnail -> {
+              try {
+                  String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
+                  thumbnail.updateThumbnail(imgUrl);
+              } catch (IOException e) {
+                  throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION, e.getMessage());
+              }
+              return thumbnail;
+          })
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_IMAGE));
+    }
+
+    public void checkVisibleRoomOrThrow(Long roomId) {
+        roomRepository.findByIdAndRegisterStatus(roomId, RegisterStatus.VISIBLE)
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ROOM));
+    }
+
 }

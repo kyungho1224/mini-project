@@ -12,6 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/hotels/{hotelId}/rooms")
@@ -43,6 +45,32 @@ public class RoomController {
         }
 
         return ApiResponse.ok(HttpStatus.CREATED.value(), "Registered successfully");
+    }
+
+    @PatchMapping("/{roomId}")
+    public ApiResponse<Void> updateData(
+      Authentication authentication,
+      @PathVariable Long hotelId,
+      @PathVariable Long roomId,
+      @Validated
+      @RequestBody RoomDTO.Request request
+    ) {
+        roomService.updateData(authentication.getName(), hotelId, roomId, request);
+        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+    }
+
+    @PatchMapping("/{roomId}/thumbnails/{thumbnailId}")
+    public ApiResponse<Void> updateThumbnail(
+      Authentication authentication,
+      @PathVariable Long hotelId,
+      @PathVariable Long roomId,
+      @PathVariable Long thumbnailId,
+      @RequestParam(name = "file") MultipartFile file
+    ) {
+        Optional.ofNullable(file)
+          .ifPresent(image ->
+            roomService.updateThumbnail(authentication.getName(), hotelId, roomId, thumbnailId, image));
+        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
     }
 
     @DeleteMapping("/{roomId}")

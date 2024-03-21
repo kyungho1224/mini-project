@@ -28,4 +28,8 @@ public class RoomThumbnail extends BaseEntity {
         return new RoomThumbnail(room, imgUrl);
     }
 
+    public void updateThumbnail(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
 }
