@@ -112,4 +112,68 @@ public class MemberDTO {
 
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Getter
+    public static class MyPageResponse {
+
+        private Long id;
+
+        private String profileImage;
+
+        private String name;
+
+        private String email;
+
+        private String birth;
+
+        private String password;
+
+        private MemberStatus status;
+
+        private MemberRole role;
+
+        private String address;
+
+        private String city;
+
+        private String nation;
+
+        private String zipCode;
+
+        private BigDecimal credit;
+
+        public static MyPageResponse of(Member member) {
+            return MyPageResponse.builder()
+                    .id(member.getId())
+                    .profileImage(member.getProfileImage())
+                    .name(member.getName())
+                    .email(member.getEmail())
+                    .birth(member.getBirth())
+                    .password(member.getPassword())
+                    .status(member.getStatus())
+                    .role(member.getRole())
+                    .address(member.getAddress())
+                    .city(member.getCity())
+                    .nation(member.getNation())
+                    .zipCode(member.getZipCode())
+                    .credit(member.getCredit())
+                    .build();
+        }
+
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class UpdateMemberRequest {
+        private Long id;
+        private String password;
+        private String address;
+        private String city;
+        private String nation;
+        private String zipCode;
+    }
+
 }
