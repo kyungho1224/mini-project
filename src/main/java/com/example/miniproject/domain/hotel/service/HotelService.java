@@ -4,10 +4,8 @@ import com.example.miniproject.common.service.ImageService;
 import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.constant.RegisterStatus;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
-import com.example.miniproject.domain.hotel.dto.RoomDTO;
 import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.entity.HotelThumbnail;
-import com.example.miniproject.domain.hotel.entity.Room;
 import com.example.miniproject.domain.hotel.repository.HotelRepository;
 import com.example.miniproject.domain.hotel.repository.HotelThumbnailRepository;
 import com.example.miniproject.domain.hotel.repository.RoomRepository;
@@ -26,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -95,16 +92,10 @@ public class HotelService {
         return hotelRepository.findByNameContainingAndRegisterStatus(name, RegisterStatus.VISIBLE, pageable);
     }
 
-    public List<RoomDTO.Response> findAllVisibleRoomsByHotelId(Long hotelId) {
-        List<Room> rooms = roomRepository.findAllByHotelIdAndRegisterStatus(hotelId, RegisterStatus.VISIBLE);
-
-        if (rooms.isEmpty()) {
-            throw new ApiException(ApiErrorCode.NOT_FOUND_ROOM);
-        }
-
-        return rooms.stream()
-          .map(RoomDTO.Response::of)
-          .collect(Collectors.toList());
+    public HotelDTO.Response findHotelById(Long hotelId) {
+        return hotelRepository.findByIdAndRegisterStatus(hotelId, RegisterStatus.VISIBLE)
+          .map(HotelDTO.Response::of)
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
     }
 
     public void unregister(String email, Long hotelId) {

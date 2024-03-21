@@ -3,7 +3,6 @@ package com.example.miniproject.domain.hotel.controller;
 import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
-import com.example.miniproject.domain.hotel.dto.RoomDTO;
 import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.service.HotelService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,8 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -66,17 +63,16 @@ public class HotelController {
 
     @GetMapping("/name/{name}")
     public ApiResponse<Page<HotelDTO.Response>> searchHotelsByName(
-            @PathVariable String name,
-            Pageable pageable) {
+      @PathVariable String name,
+      Pageable pageable) {
         Page<Hotel> hotels = hotelService.findHotelsByNameAndVisible(name, pageable);
         Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
         return ApiResponse.ok(HttpStatus.OK.value(), responsePage);
     }
 
     @GetMapping("/{hotelId}")
-    public ApiResponse<List<RoomDTO.Response>> getAllVisibleRoomsByHotelId(@PathVariable Long hotelId) {
-        List<RoomDTO.Response> rooms = hotelService.findAllVisibleRoomsByHotelId(hotelId);
-        return ApiResponse.ok(HttpStatus.OK.value(), rooms);
+    public ApiResponse<HotelDTO.Response> getAllVisibleRoomsByHotelId(@PathVariable Long hotelId) {
+        return ApiResponse.ok(HttpStatus.OK.value(), hotelService.findHotelById(hotelId));
     }
 
     @DeleteMapping("/{hotelId}")

@@ -1,10 +1,8 @@
 package com.example.miniproject.domain.hotel.dto;
 
-import com.example.miniproject.domain.hotel.constant.ActiveStatus;
-import com.example.miniproject.domain.hotel.constant.Nation;
-import com.example.miniproject.domain.hotel.constant.PetRule;
-import com.example.miniproject.domain.hotel.constant.SmokingRule;
+import com.example.miniproject.domain.hotel.constant.*;
 import com.example.miniproject.domain.hotel.entity.Hotel;
+import com.example.miniproject.domain.hotel.entity.Room;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HotelDTO {
 
@@ -97,6 +96,11 @@ public class HotelDTO {
         private List<RoomDTO.Response> rooms;
 
         public static Response of(Hotel hotel) {
+
+            List<Room> rooms = hotel.getRooms().stream()
+              .filter(room -> room.getRegisterStatus() == RegisterStatus.VISIBLE)
+              .collect(Collectors.toList());
+
             return Response.builder()
               .id(hotel.getId())
               .nation(hotel.getNation())
@@ -113,7 +117,7 @@ public class HotelDTO {
               .activeStatus(hotel.getActiveStatus())
               .latitude(hotel.getLatitude())
               .longitude(hotel.getLongitude())
-              .rooms(RoomDTO.Response.of(hotel.getRooms()))
+              .rooms(RoomDTO.Response.of(rooms))
               .build();
         }
 
