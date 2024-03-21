@@ -94,4 +94,8 @@ public class Room extends BaseEntity {
         thumbnails.remove(thumbnail);
     }
 
+    public void delete() {
+        this.registerStatus = RegisterStatus.INVISIBLE;
+    }
+
 }

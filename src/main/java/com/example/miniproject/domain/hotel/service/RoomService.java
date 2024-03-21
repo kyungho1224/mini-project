@@ -1,6 +1,7 @@
 package com.example.miniproject.domain.hotel.service;
 
 import com.example.miniproject.common.service.ImageService;
+import com.example.miniproject.domain.hotel.constant.RegisterStatus;
 import com.example.miniproject.domain.hotel.dto.RoomDTO;
 import com.example.miniproject.domain.hotel.entity.Room;
 import com.example.miniproject.domain.hotel.entity.RoomThumbnail;
@@ -67,6 +68,18 @@ public class RoomService {
               return room;
           })
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ROOM));
+    }
+
+    public void unregister(String email, Long hotelId, Long roomId) {
+        hotelService.validMasterMemberOrThrow(email);
+        hotelRepository.findByIdAndRegisterStatus(hotelId, RegisterStatus.VISIBLE)
+          .map(hotel -> roomRepository.findByIdAndHotelIdAndRegisterStatus(roomId, hotelId, RegisterStatus.VISIBLE)
+            .map(room -> {
+                room.delete();
+                return room;
+            })
+            .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ROOM)))
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
     }
 
 }

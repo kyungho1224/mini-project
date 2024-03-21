@@ -45,4 +45,14 @@ public class RoomController {
         return ApiResponse.ok(HttpStatus.CREATED.value(), "Registered successfully");
     }
 
+    @DeleteMapping("/{roomId}")
+    public ApiResponse<Void> unregister(
+      Authentication authentication,
+      @PathVariable Long hotelId,
+      @PathVariable Long roomId
+    ) {
+        roomService.unregister(authentication.getName(), hotelId, roomId);
+        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+    }
+
 }
