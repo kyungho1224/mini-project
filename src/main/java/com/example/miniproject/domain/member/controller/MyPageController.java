@@ -3,6 +3,7 @@ package com.example.miniproject.domain.member.controller;
 import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.member.service.MemberService;
+import com.example.miniproject.domain.member.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
