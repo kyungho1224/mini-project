@@ -139,4 +139,9 @@ public class MemberService {
                 .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
     }
 
+    public Member getValidMemberOrThrow(String email) {
+        return memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+    }
+
 }

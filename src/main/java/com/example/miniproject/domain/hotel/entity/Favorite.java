@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
 @Entity
 @Table(name = "favorites")
@@ -21,7 +20,11 @@ public class Favorite extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false, name = "product_id")
+    @JoinColumn(nullable = false, name = "hotel_id")
     private Hotel hotel;
+
+    public static Favorite saveAs(Member member, Hotel hotel) {
+        return new Favorite(member, hotel);
+    }
 
 }

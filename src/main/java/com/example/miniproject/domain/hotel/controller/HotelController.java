@@ -115,4 +115,13 @@ public class HotelController {
         return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
     }
 
+    @PostMapping("/{hotelId}/favorite")
+    public ApiResponse<Void> favorite(
+      Authentication authentication,
+      @PathVariable Long hotelId
+    ) {
+        hotelService.toggleFavorite(authentication.getName(), hotelId);
+        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+    }
+
 }
