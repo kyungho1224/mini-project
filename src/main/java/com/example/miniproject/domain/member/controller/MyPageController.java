@@ -15,14 +15,12 @@ import java.security.Principal;
 @RequestMapping("/api/members")
 public class MyPageController {
 
-    private final MyPageService myPageService;
-
     private final MemberService memberService;
 
     @GetMapping("/my-info")
     public ApiResponse<MemberDTO.MyPageResponse> getProfile(Principal principal) {
         String email = principal.getName();
-        MemberDTO.MyPageResponse myPage = myPageService.getMyPageInfo(email);
+        MemberDTO.MyPageResponse myPage = memberService.getMyPageInfo(email);
         return ApiResponse.ok(HttpStatus.OK.value(), myPage);
     }
 
