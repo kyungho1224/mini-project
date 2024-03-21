@@ -86,6 +86,18 @@ public class Room extends BaseEntity {
           .build();
     }
 
+    public void updateData(RoomDTO.Request request) {
+        this.type = request.getType();
+        this.activeStatus = request.getActiveStatus();
+        this.bedType = request.getBedType();
+        this.standardCapacity = request.getStandardCapacity();
+        this.maximumCapacity = request.getMaximumCapacity();
+        this.viewType = request.getViewType();
+        this.standardPrice = request.getStandardPrice();
+        this.adultFare = request.getAdultFare();
+        this.childFare = request.getChildFare();
+    }
+
     public void addThumbnail(RoomThumbnail thumbnail) {
         thumbnails.add(thumbnail);
     }

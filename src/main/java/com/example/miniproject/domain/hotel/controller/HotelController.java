@@ -75,7 +75,7 @@ public class HotelController {
         return ApiResponse.ok(HttpStatus.OK.value(), hotelService.findHotelById(hotelId));
     }
 
-    @PatchMapping("{hotelId}")
+    @PatchMapping("/{hotelId}")
     public ApiResponse<Void> updateData(
       Authentication authentication,
       @PathVariable Long hotelId,
@@ -86,7 +86,7 @@ public class HotelController {
         return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
     }
 
-    @PatchMapping("{hotelId}/thumbnails/{thumbnailId}")
+    @PatchMapping("/{hotelId}/thumbnails/{thumbnailId}")
     public ApiResponse<Void> updateThumbnail(
       Authentication authentication,
       @PathVariable Long hotelId,
@@ -96,6 +96,13 @@ public class HotelController {
         if (file != null) {
             hotelService.updateThumbnail(authentication.getName(), hotelId, thumbnailId, file);
         }
+//        Optional.ofNullable(file)
+//          .ifPresentOrElse(image ->
+//            hotelService.updateThumbnail(authentication.getName(), hotelId, thumbnailId, image),
+//            () -> {
+//              throw new ApiException(ApiErrorCode.NOT_FOUND_ROOM);
+//            }
+//          );
         return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
     }
 

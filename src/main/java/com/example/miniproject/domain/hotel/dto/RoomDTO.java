@@ -5,7 +5,6 @@ import com.example.miniproject.domain.hotel.constant.BedType;
 import com.example.miniproject.domain.hotel.constant.RoomType;
 import com.example.miniproject.domain.hotel.constant.ViewType;
 import com.example.miniproject.domain.hotel.entity.Room;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,7 +37,7 @@ public class RoomDTO {
         @NotNull(message = "최대 인원수는 필수 입력입니다")
         private int maximumCapacity;
 
-        @NotBlank(message = "뷰 타입은 필수 입력입니다")
+        @NotNull(message = "뷰 타입은 필수 입력입니다")
         private ViewType viewType;
 
         @NotNull(message = "표준 가격은 필수 입력입니다")

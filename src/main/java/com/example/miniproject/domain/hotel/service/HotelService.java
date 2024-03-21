@@ -79,6 +79,11 @@ public class HotelService {
         }
     }
 
+    public Hotel getVisibleHotelOrThrow(Long hotelId) {
+        return hotelRepository.findByIdAndRegisterStatus(hotelId, RegisterStatus.VISIBLE)
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
+    }
+
     public Page<Hotel> findAllVisibleHotels(Pageable pageable) {
         return hotelRepository.findAllByRegisterStatus(pageable, RegisterStatus.VISIBLE);
     }
@@ -132,7 +137,7 @@ public class HotelService {
                     }
                     return thumbnail;
                 })
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_IMAGE));
               return hotel;
           })
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
