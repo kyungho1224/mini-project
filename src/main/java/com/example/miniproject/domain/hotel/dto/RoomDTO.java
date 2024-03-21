@@ -3,8 +3,6 @@ package com.example.miniproject.domain.hotel.dto;
 import com.example.miniproject.domain.hotel.constant.ActiveStatus;
 import com.example.miniproject.domain.hotel.constant.RoomType;
 import com.example.miniproject.domain.hotel.entity.Room;
-import com.example.miniproject.domain.hotel.entity.HotelThumbnail;
-import com.example.miniproject.domain.hotel.entity.RoomThumbnail;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RoomDTO {
 
@@ -83,7 +82,7 @@ public class RoomDTO {
 
         private BigDecimal discountRate;
 
-        private List<RoomThumbnail> thumbnails;
+        private List<ThumbnailDTO.RoomThumbnailsResponse> thumbnails;
 
         public static Response of(Room room) {
             return Response.builder()
@@ -98,8 +97,12 @@ public class RoomDTO {
               .standardPrice(room.getStandardPrice())
               .adultFare(room.getAdultFare())
               .childFare(room.getChildFare())
-              .thumbnails(room.getThumbnails())
+              .thumbnails(ThumbnailDTO.RoomThumbnailsResponse.from(room.getThumbnails()))
               .build();
+        }
+
+        public static List<Response> of(List<Room> rooms) {
+            return rooms.stream().map(Response::of).collect(Collectors.toList());
         }
 
     }

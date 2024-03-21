@@ -4,8 +4,6 @@ import com.example.miniproject.domain.hotel.constant.ActiveStatus;
 import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.entity.BasicOptions;
 import com.example.miniproject.domain.hotel.entity.Hotel;
-import com.example.miniproject.domain.hotel.entity.Room;
-import com.example.miniproject.domain.hotel.entity.HotelThumbnail;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -60,7 +58,7 @@ public class HotelDTO {
 
         private String description;
 
-        private List<HotelThumbnail> thumbnails;
+        private List<ThumbnailDTO.HotelThumbnailsResponse> thumbnails;
 
         private BasicOptions basicOptions;
 
@@ -74,7 +72,7 @@ public class HotelDTO {
 
         private Long longitude;
 
-        private List<Room> rooms;
+        private List<RoomDTO.Response> rooms;
 
         public static Response of(Hotel hotel) {
             return Response.builder()
@@ -82,14 +80,14 @@ public class HotelDTO {
               .nation(hotel.getNation())
               .name(hotel.getName())
               .description(hotel.getDescription())
-              .thumbnails(hotel.getThumbnails())
+              .thumbnails(ThumbnailDTO.HotelThumbnailsResponse.from(hotel.getThumbnails()))
               .basicOptions(hotel.getBasicOptions())
               .activeStatus(hotel.getActiveStatus())
               .checkIn(hotel.getCheckIn())
               .checkOut(hotel.getCheckOut())
               .latitude(hotel.getLatitude())
               .longitude(hotel.getLongitude())
-              .rooms(hotel.getRooms())
+              .rooms(RoomDTO.Response.of(hotel.getRooms()))
               .build();
         }
 
