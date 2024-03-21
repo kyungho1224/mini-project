@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -81,7 +79,6 @@ public class MemberService {
     }
 
     public void uploadProfile(String email, MultipartFile file) {
-
         memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
           .map(member -> {
               try {
@@ -92,7 +89,7 @@ public class MemberService {
               }
               return member;
           })
-            .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
     }
 
     private void validatePasswordWithThrow(String password, String encodedPassword) {
