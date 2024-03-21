@@ -14,8 +14,7 @@ public enum BedType {
     SOFA_BED("소파 베드"),
     BUNK_BED("이층 침대"),
     STORAGE_BED("수납 침대"),
-    CUSTOM("맞춤형"),
-    ;
+    CUSTOM("맞춤형");
 
     private final String type;
 

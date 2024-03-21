@@ -8,7 +8,6 @@ import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.entity.HotelThumbnail;
 import com.example.miniproject.domain.hotel.repository.HotelRepository;
 import com.example.miniproject.domain.hotel.repository.HotelThumbnailRepository;
-import com.example.miniproject.domain.hotel.repository.RoomRepository;
 import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.entity.Member;
@@ -35,7 +34,6 @@ public class HotelService {
     private final MemberRepository memberRepository;
     private final HotelRepository hotelRepository;
     private final HotelThumbnailRepository hotelThumbnailRepository;
-    private final RoomRepository roomRepository;
     private final ImageService imageService;
 
     public void create(String email, HotelDTO.Request request) {
@@ -54,7 +52,6 @@ public class HotelService {
         validMasterMemberOrThrow(email);
         hotelRepository.findById(hotelId)
           .map(hotel -> {
-
               Arrays.stream(files).peek(file -> {
                   try {
                       String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
@@ -64,9 +61,7 @@ public class HotelService {
                       throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION, e.getMessage());
                   }
               }).collect(Collectors.toList());
-
               return hotel;
-
           })
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_HOTEL));
     }
