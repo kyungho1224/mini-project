@@ -11,6 +11,8 @@ import com.example.miniproject.domain.order.repository.OrderRepository;
 import com.example.miniproject.exception.ApiErrorCode;
 import com.example.miniproject.exception.ApiException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +75,11 @@ public class OrderService {
           request.getComment());
 
         order.updateStatus(OrderStatus.PAYMENT_COMPLETED);
+    }
+
+    public Page<OrderDTO.OrderDetailResponse> orderList(String email, Pageable pageable) {
+        memberService.getMasterMemberOrThrow(email);
+        return orderRepository.findAll(pageable).map(OrderDTO.OrderDetailResponse::of);
     }
 
 }

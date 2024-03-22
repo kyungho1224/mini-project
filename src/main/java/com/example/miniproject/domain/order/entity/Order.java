@@ -48,7 +48,7 @@ public class Order extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '결제 상태'")
     private OrderStatus status;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '요청 사항'")
+    @Column(columnDefinition = "VARCHAR(255) NOT NULL COMMENT '요청 사항'")
     private String comment;
 
     @Column(columnDefinition = "VARCHAR(255) COMMENT '우편번호'")

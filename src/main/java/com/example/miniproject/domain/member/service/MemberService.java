@@ -90,9 +90,9 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public MemberDTO.MyPageResponse getMyPageInfo(String email) {
+    public MemberDTO.DetailResponse getMyPageInfo(String email) {
         Member member = getValidMemberOrThrow(email);
-        return MemberDTO.MyPageResponse.of(member);
+        return MemberDTO.DetailResponse.of(member);
     }
 
     public void updateMemberInfo(String email, MemberDTO.UpdateMemberRequest request) {
