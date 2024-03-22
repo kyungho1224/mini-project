@@ -1,5 +1,8 @@
 package com.example.miniproject.domain.order.dto;
 
+import com.example.miniproject.domain.hotel.dto.HotelDTO;
+import com.example.miniproject.domain.hotel.dto.RoomDTO;
+import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.order.constant.OrderStatus;
 import com.example.miniproject.domain.order.entity.Order;
 import jakarta.validation.constraints.NotNull;
@@ -51,15 +54,15 @@ public class OrderDTO {
 
         public static OrderResponse of(Order order) {
             return OrderResponse.builder()
-                    .id(order.getId())
-                    .memberId(order.getMember().getId())
-                    .roomId(order.getRoom().getId())
-                    .checkIn(order.getCheckIn())
-                    .checkOut(order.getCheckOut())
-                    .adultCount(order.getAdultCount())
-                    .childCount(order.getChildCount())
-                    .totalPrice(order.getTotalPrice())
-                    .build();
+              .id(order.getId())
+              .memberId(order.getMember().getId())
+              .roomId(order.getRoom().getId())
+              .checkIn(order.getCheckIn())
+              .checkOut(order.getCheckOut())
+              .adultCount(order.getAdultCount())
+              .childCount(order.getChildCount())
+              .totalPrice(order.getTotalPrice())
+              .build();
         }
     }
 
@@ -106,21 +109,63 @@ public class OrderDTO {
 
         public static OrderInfoResponse of(Order order) {
             return OrderInfoResponse.builder()
-                    .id(order.getId())
-                    .memberId(order.getMember().getId())
-                    .roomId(order.getRoom().getId())
-                    .checkIn(order.getCheckIn())
-                    .checkOut(order.getCheckOut())
-                    .adultCount(order.getAdultCount())
-                    .childCount(order.getChildCount())
-                    .totalPrice(order.getTotalPrice())
-                    .status(order.getStatus())
-                    .address(order.getAddress())
-                    .city(order.getCity())
-                    .nation(order.getNation())
-                    .zipCode(order.getZipCode())
-                    .comment(order.getComment())
-                    .build();
+              .id(order.getId())
+              .memberId(order.getMember().getId())
+              .roomId(order.getRoom().getId())
+              .checkIn(order.getCheckIn())
+              .checkOut(order.getCheckOut())
+              .adultCount(order.getAdultCount())
+              .childCount(order.getChildCount())
+              .totalPrice(order.getTotalPrice())
+              .status(order.getStatus())
+              .address(order.getAddress())
+              .city(order.getCity())
+              .nation(order.getNation())
+              .zipCode(order.getZipCode())
+              .comment(order.getComment())
+              .build();
+        }
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Getter
+    public static class OrderDetailResponse {
+        private Long id;
+        private MemberDTO.SimpleResponse member;
+        private HotelDTO.SimpleResponse hotel;
+        private RoomDTO.SimpleResponse room;
+        private LocalDate checkIn;
+        private LocalDate checkOut;
+        private int adultCount;
+        private int childCount;
+        private BigDecimal totalPrice;
+        private OrderStatus status;
+        private String address;
+        private String city;
+        private String nation;
+        private String zipCode;
+        private String comment;
+
+        public static OrderDetailResponse of(Order order) {
+            return OrderDetailResponse.builder()
+              .id(order.getId())
+              .member(MemberDTO.SimpleResponse.of(order.getMember()))
+              .hotel(HotelDTO.SimpleResponse.of(order.getRoom().getHotel()))
+              .room(RoomDTO.SimpleResponse.of(order.getRoom()))
+              .checkIn(order.getCheckIn())
+              .checkOut(order.getCheckOut())
+              .adultCount(order.getAdultCount())
+              .childCount(order.getChildCount())
+              .totalPrice(order.getTotalPrice())
+              .status(order.getStatus())
+              .zipCode(order.getZipCode())
+              .nation(order.getNation())
+              .city(order.getCity())
+              .address(order.getAddress())
+              .comment(order.getComment())
+              .build();
         }
     }
 

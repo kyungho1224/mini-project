@@ -5,12 +5,13 @@ import com.example.miniproject.domain.order.dto.OrderDTO;
 import com.example.miniproject.domain.order.entity.Order;
 import com.example.miniproject.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -35,6 +36,15 @@ public class OrderController {
       @RequestBody OrderDTO.OrderInfoRequest request) {
         orderService.updateOrderInfo(orderId, request);
         return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @GetMapping("/order-list")
+    public ResponseEntity<ApiResponse<Page<OrderDTO.OrderDetailResponse>>> orderList(
+      Authentication authentication,
+      Pageable pageable
+    ) {
+        var result = orderService.orderList(authentication.getName(), pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(result));
     }
 
 }

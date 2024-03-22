@@ -57,7 +57,7 @@ public class MemberController {
     }
 
     @GetMapping("/my-info")
-    public ResponseEntity<ApiResponse<MemberDTO.MyPageResponse>> getProfile(Principal principal) {
+    public ResponseEntity<ApiResponse<MemberDTO.DetailResponse>> getProfile(Principal principal) {
         String email = principal.getName();
         return ResponseEntity.status(OK).body(ApiResponse.ok(memberService.getMyPageInfo(email)));
     }
@@ -69,7 +69,6 @@ public class MemberController {
     ) {
         memberService.updateMemberInfo(authentication.getName(), updateRequest);
         return ResponseEntity.status(OK).build();
-
     }
 
 }
