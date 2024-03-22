@@ -27,6 +27,9 @@ public enum ApiErrorCode implements ErrorCode {
 
     FIREBASE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase Error"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "server error"),
+
+    NOT_AVAILABLE_ROOM(HttpStatus.BAD_REQUEST.value(), "Room is not available"),
+    EXCEEDS_MAXIMUM_CAPACITY(HttpStatus.BAD_REQUEST.value(), "Exceeds maximum capacity")
     ;
 
     private final Integer httpStatusCode;
