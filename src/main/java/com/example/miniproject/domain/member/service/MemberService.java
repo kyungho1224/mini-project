@@ -1,6 +1,7 @@
 package com.example.miniproject.domain.member.service;
 
 import com.example.miniproject.common.service.ImageService;
+import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.member.dto.TokenDTO;
@@ -18,8 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +44,7 @@ public class MemberService {
 
     public MemberDTO.JoinResponse create(MemberDTO.JoinRequest request) throws Exception {
         if (memberRepository.existsByEmail(request.getEmail())) {
-            throw new ApiException(ApiErrorCode.DUPLICATED_EMAIL);
+            throw new ApiException(ApiErrorCode.DUPLICATED_EMAIL.getDescription());
         }
 
         String uuid = UUID.randomUUID().toString();
@@ -66,37 +65,59 @@ public class MemberService {
               member.updateStatus(MemberStatus.CERTIFICATED);
               return member;
           })
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription()));
     }
 
     public MemberDTO.LoginResponse login(MemberDTO.LoginRequest request) {
-        return memberRepository.findByEmailAndStatus(request.getEmail(), MemberStatus.CERTIFICATED)
-          .map(member -> {
-              validatePasswordWithThrow(request.getPassword(), member.getPassword());
-              TokenDTO tokenDTO = jwtTokenUtil.generatedToken(member.getEmail());
-              member.updateRefreshToken(tokenDTO.getRefreshToken());
-              return MemberDTO.LoginResponse.of(member, tokenDTO.getAccessToken());
-          })
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+        Member member = getValidMemberOrThrow(request.getEmail());
+
+        validatePasswordWithThrow(request.getPassword(), member.getPassword());
+
+        TokenDTO tokenDTO = jwtTokenUtil.generatedToken(member.getEmail());
+        member.updateRefreshToken(tokenDTO.getRefreshToken());
+
+        return MemberDTO.LoginResponse.of(member, tokenDTO.getAccessToken());
     }
 
     public void uploadProfile(String email, MultipartFile file) {
-        memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
-          .map(member -> {
-              try {
-                  String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
-                  member.updateProfileImage(imgUrl);
-              } catch (IOException e) {
-                  throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION, e.getMessage());
-              }
-              return member;
-          })
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+        Member member = getValidMemberOrThrow(email);
+        try {
+            String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
+            member.updateProfileImage(imgUrl);
+        } catch (IOException e) {
+            throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION.getDescription());
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public MemberDTO.MyPageResponse getMyPageInfo(String email) {
+        Member member = getValidMemberOrThrow(email);
+        return MemberDTO.MyPageResponse.of(member);
+    }
+
+    public void updateMemberInfo(String email, MemberDTO.UpdateMemberRequest request) {
+        Member member = getValidMemberOrThrow(email);
+
+        validatePasswordWithThrow(request.getPassword(), member.getPassword());
+
+        member.updateAdditionalInfo(
+          request.getZipCode(), request.getNation(), request.getCity(), request.getAddress()
+        );
+    }
+
+    public Member getValidMemberOrThrow(String email) {
+        return memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription()));
+    }
+
+    public Member getMasterMemberOrThrow(String email) {
+        return memberRepository.findByEmailAndRole(email, MemberRole.MASTER)
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NO_PERMISSION.getDescription()));
     }
 
     private void validatePasswordWithThrow(String password, String encodedPassword) {
         if (!passwordEncoder.matches(password, encodedPassword)) {
-            throw new ApiException(ApiErrorCode.NOT_MATCH_PASSWORD);
+            throw new ApiException(ApiErrorCode.NOT_MATCH_PASSWORD.getDescription());
         }
     }
 
@@ -116,32 +137,6 @@ public class MemberService {
         messageHelper.setText(body, true);
         messageHelper.setFrom(new InternetAddress(mailSenderUsername, "MASTER"));
         mailSender.send(mimeMessage);
-    }
-
-    public void updateMemberInfo(MemberDTO.UpdateMemberRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
-
-        validatePasswordWithThrow(request.getPassword(), member.getPassword());
-
-        member.updateAdditionalInfo(request.getZipCode(), request.getNation(), request.getCity(), request.getAddress());
-        memberRepository.save(member);
-
-    }
-
-    @Transactional(readOnly = true)
-    public MemberDTO.MyPageResponse getMyPageInfo(String email) {
-        return memberRepository.findByEmail(email)
-                .map(MemberDTO.MyPageResponse::of)
-                .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
-    }
-
-    public Member getValidMemberOrThrow(String email) {
-        return memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
     }
 
 }

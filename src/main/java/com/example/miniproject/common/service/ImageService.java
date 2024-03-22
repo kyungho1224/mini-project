@@ -38,7 +38,7 @@ public interface ImageService {
             bos.flush();
             return bos.toByteArray();
         } catch (IOException e) {
-            throw new ApiException(ApiErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
+            throw new ApiException(ApiErrorCode.INTERNAL_SERVER_ERROR.getDescription());
         }
     }
 

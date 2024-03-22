@@ -45,7 +45,7 @@ public class FirebaseService implements ImageService {
     }
 
     @Override
-    public String save(BufferedImage bufferedImage, String originFilename) throws IOException {
+    public String save(BufferedImage bufferedImage, String originFilename) {
         byte[] bytes = getByteArrays(bufferedImage, getExtension(originFilename));
         Bucket bucket = StorageClient.getInstance().bucket(firebaseBucket);
         String name = generateFilename(originFilename);
@@ -57,11 +57,11 @@ public class FirebaseService implements ImageService {
     public void delete(String name) {
         Bucket bucket = StorageClient.getInstance().bucket(firebaseBucket);
         if (StringUtils.isEmpty(name)) {
-            throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION);
+            throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION.getDescription());
         }
         Blob blob = bucket.get(name);
         if (blob == null) {
-            throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION);
+            throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION.getDescription());
         }
         blob.delete();
     }

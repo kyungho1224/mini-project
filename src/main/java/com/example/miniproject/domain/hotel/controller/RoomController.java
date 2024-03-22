@@ -1,18 +1,20 @@
 package com.example.miniproject.domain.hotel.controller;
 
-import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.hotel.dto.RoomDTO;
 import com.example.miniproject.domain.hotel.service.RoomService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,14 +25,13 @@ public class RoomController {
     private final ObjectMapper objectMapper;
 
     @PostMapping
-    public ApiResponse<String> register(
+    public ResponseEntity<Void> register(
       Authentication authentication,
       @PathVariable Long hotelId,
       @Validated
       @RequestParam(name = "request") String json,
       @RequestParam(name = "file", required = false) MultipartFile[] files
     ) {
-
         RoomDTO.Request request;
         try {
             request = objectMapper.readValue(json, RoomDTO.Request.class);
@@ -43,12 +44,11 @@ public class RoomController {
         } else {
             roomService.create(authentication.getName(), hotelId, request);
         }
-
-        return ApiResponse.ok(HttpStatus.CREATED.value(), "Registered successfully");
+        return ResponseEntity.status(CREATED).build();
     }
 
     @PatchMapping("/{roomId}")
-    public ApiResponse<Void> updateData(
+    public ResponseEntity<Void> updateData(
       Authentication authentication,
       @PathVariable Long hotelId,
       @PathVariable Long roomId,
@@ -56,11 +56,11 @@ public class RoomController {
       @RequestBody RoomDTO.Request request
     ) {
         roomService.updateData(authentication.getName(), hotelId, roomId, request);
-        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
     @PatchMapping("/{roomId}/thumbnails/{thumbnailId}")
-    public ApiResponse<Void> updateThumbnail(
+    public ResponseEntity<Void> updateThumbnail(
       Authentication authentication,
       @PathVariable Long hotelId,
       @PathVariable Long roomId,
@@ -70,17 +70,17 @@ public class RoomController {
         Optional.ofNullable(file)
           .ifPresent(image ->
             roomService.updateThumbnail(authentication.getName(), hotelId, roomId, thumbnailId, image));
-        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
     @DeleteMapping("/{roomId}")
-    public ApiResponse<Void> unregister(
+    public ResponseEntity<Void> unregister(
       Authentication authentication,
       @PathVariable Long hotelId,
       @PathVariable Long roomId
     ) {
         roomService.unregister(authentication.getName(), hotelId, roomId);
-        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
 }
