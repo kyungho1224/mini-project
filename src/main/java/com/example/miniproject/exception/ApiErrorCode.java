@@ -25,8 +25,13 @@ public enum ApiErrorCode implements ErrorCode {
 
     NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), "Not found notice"),
 
+    NOT_FOUND_ORDER(HttpStatus.NOT_FOUND.value(), "Not found order"),
+
     FIREBASE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase Error"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "server error"),
+
+    NOT_AVAILABLE_ROOM(HttpStatus.BAD_REQUEST.value(), "Room is not available"),
+    EXCEEDS_MAXIMUM_CAPACITY(HttpStatus.BAD_REQUEST.value(), "Exceeds maximum capacity")
     ;
 
     private final Integer httpStatusCode;
