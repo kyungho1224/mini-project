@@ -24,4 +24,10 @@ public class OrderController {
         return ApiResponse.ok(HttpStatus.CREATED.value(), orderResponse);
     }
 
+    @PutMapping("/{orderId}")
+    public ApiResponse<OrderDTO.OrderInfoResponse> updateOrderInfo(@PathVariable Long orderId, @RequestBody OrderDTO.OrderInfoRequest request) {
+        OrderDTO.OrderInfoResponse response = orderService.updateOrderInfo(orderId, request);
+        return ApiResponse.ok(HttpStatus.OK.value(), response);
+    }
+
 }

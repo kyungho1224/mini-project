@@ -76,11 +76,12 @@ public class Order extends BaseEntity {
         this.status = status;
     }
 
-    public void updateAdditionalInfo(String zipCode, String nation, String city, String address) {
+    public void updateAdditionalInfo(String zipCode, String nation, String city, String address, String comment) {
         this.zipCode = zipCode;
         this.nation = nation;
         this.city = city;
         this.address = address;
+        this.comment = comment;
     }
 
 }

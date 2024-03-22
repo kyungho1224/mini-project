@@ -68,17 +68,17 @@ public class OrderDTO {
     @Getter
     public static class OrderInfoRequest {
 
-        @NotNull(message = "주소 필수 입력입니다")
-        private String address;
-
-        @NotNull(message = "도시 필수 입력입니다")
-        private String city;
+        @NotNull(message = "우편번호 필수 입력입니다")
+        private String zipCode;
 
         @NotNull(message = "국가 필수 입력입니다")
         private String nation;
 
-        @NotNull(message = "우편번호 필수 입력입니다")
-        private String zipCode;
+        @NotNull(message = "도시 필수 입력입니다")
+        private String city;
+
+        @NotNull(message = "주소 필수 입력입니다")
+        private String address;
 
         private String comment;
 
