@@ -43,22 +43,18 @@ public class OrderService {
         Room room = roomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ROOM));
 
-        // Room의 등록 상태, 판매 상태 체크
         if (room.getRegisterStatus() != RegisterStatus.VISIBLE || room.getActiveStatus() != ActiveStatus.ACTIVE) {
             throw new ApiException(ApiErrorCode.NOT_AVAILABLE_ROOM);
         }
 
-        // 성인 인원 + 아이 인원이 추가할 수 있는 인원보다 크지 않은지 확인
         if (request.getAdultCount() + request.getChildCount() > room.getMaximumCapacity() - room.getStandardCapacity()) {
             throw new ApiException(ApiErrorCode.EXCEEDS_MAXIMUM_CAPACITY);
         }
 
-        // 결제 총액 계산
         BigDecimal totalPrice = room.getStandardPrice()
                 .add(room.getAdultFare().multiply(BigDecimal.valueOf(request.getAdultCount())))
                 .add(room.getChildFare().multiply(BigDecimal.valueOf(request.getChildCount())));
 
-        // 할인율 적용 시
         if (room.getDiscountRate() != null) {
             totalPrice = totalPrice.multiply(BigDecimal.ONE.subtract(room.getDiscountRate()));
         }
@@ -74,7 +70,7 @@ public class OrderService {
                 ""
         );
 
-        order.updateStatus(OrderStatus.PAYMENT_PENDING); // 결제 대기로 상태 변경
+        order.updateStatus(OrderStatus.PAYMENT_PENDING);
 
         return orderRepository.save(order);
     }
@@ -85,10 +81,9 @@ public class OrderService {
                 .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ORDER));
 
         if (!order.getStatus().equals(OrderStatus.PAYMENT_PENDING)) {
-            throw new ApiException(ApiErrorCode.NOT_FOUND_ORDER); // 결제 대기 상태가 아닌 경우의 예외코드 어떻게 해야할지 모르겠음
+            throw new ApiException(ApiErrorCode.NOT_FOUND_ORDER);
         }
 
-        // 주소와 요청 사항 업데이트
         order.updateAdditionalInfo(
                 request.getZipCode(),
                 request.getNation(),
@@ -96,7 +91,7 @@ public class OrderService {
                 request.getAddress(),
                 request.getComment());
 
-        order.updateStatus(OrderStatus.PAYMENT_COMPLETED); // 결제 완료로 상태 변경
+        order.updateStatus(OrderStatus.PAYMENT_COMPLETED);
 
         orderRepository.save(order);
 
