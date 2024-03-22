@@ -64,11 +64,10 @@ public class Order extends BaseEntity {
     private String address;
 
     public static Order saveAs(Member member, Room room, LocalDate checkIn, LocalDate checkOut,
-                               int adultCount, int childCount, BigDecimal totalPrice, String comment) {
+                               int adultCount, int childCount, BigDecimal totalPrice) {
         return Order.builder()
           .member(member).room(room).checkIn(checkIn).checkOut(checkOut)
           .adultCount(adultCount).childCount(childCount).totalPrice(totalPrice)
-          .comment(comment)
           .build();
     }
 

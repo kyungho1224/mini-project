@@ -5,6 +5,7 @@ import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.entity.Notice;
 import com.example.miniproject.domain.hotel.repository.NoticeRepository;
 import com.example.miniproject.domain.member.entity.Member;
+import com.example.miniproject.domain.member.service.MemberService;
 import com.example.miniproject.exception.ApiErrorCode;
 import com.example.miniproject.exception.ApiException;
 import lombok.RequiredArgsConstructor;
@@ -18,36 +19,32 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final HotelService hotelService;
+    private final MemberService memberService;
 
     public void create(String email, Long hotelId, NoticeDTO.Request request) {
-        Member member = hotelService.getMemberOrThrow(email);
+        Member master = memberService.getMasterMemberOrThrow(email);
         Hotel hotel = hotelService.getVisibleHotelOrThrow(hotelId);
-        Notice savedNotice = noticeRepository.save(Notice.saveAs(member, hotel, request));
+        Notice savedNotice = noticeRepository.save(Notice.saveAs(master, hotel, request));
         hotel.addNotice(savedNotice);
     }
 
     public void update(String email, Long hotelId, Long noticeId, NoticeDTO.Request request) {
-        hotelService.validMasterMemberOrThrow(email);
+        memberService.getMasterMemberOrThrow(email);
         hotelService.getVisibleHotelOrThrow(hotelId);
         Notice notice = getNoticeOrThrow(noticeId);
         notice.update(request);
     }
 
     public void delete(String email, Long hotelId, Long noticeId) {
-        hotelService.validMasterMemberOrThrow(email);
+        memberService.getMasterMemberOrThrow(email);
         hotelService.getVisibleHotelOrThrow(hotelId);
         Notice notice = getNoticeOrThrow(noticeId);
         notice.delete();
     }
 
-    public void validNoticeOrThrow(Long noticeId) {
-        noticeRepository.findById(noticeId)
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_NOTICE));
-    }
-
     public Notice getNoticeOrThrow(Long noticeId) {
         return noticeRepository.findById(noticeId)
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_NOTICE));
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_NOTICE.getDescription()));
     }
 
 }

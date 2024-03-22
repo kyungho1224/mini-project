@@ -49,7 +49,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 if (e instanceof ExpiredJwtException) {
                     regeneratedToken(response, token);
                 } else {
-                    throw new ApiException(ApiErrorCode.TOKEN_ERROR);
+                    throw new ApiException(ApiErrorCode.TOKEN_ERROR.getDescription());
                 }
             }
         }
@@ -63,7 +63,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         try {
             String email = jwtTokenUtil.decodeJwtPayloadEmail(token);
             Member member = memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
-              .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+              .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription()));
 
             String refreshToken = member.getRefreshToken();
             if (jwtTokenUtil.isExpired(refreshToken)) {
@@ -80,7 +80,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private MemberDetails loadMemberByEmail(String email) {
         return memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
           .map(MemberDetails::of)
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription()));
     }
 
 }
