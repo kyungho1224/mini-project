@@ -5,11 +5,13 @@ import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 
 @RequiredArgsConstructor
 @RestController
@@ -42,12 +44,26 @@ public class MemberController {
         return ApiResponse.ok(memberService.login(request));
     }
 
-    @PostMapping("/upload-profile")
+    @PostMapping("/upload")
     public ApiResponse<Void> uploadProfile(
-      @RequestParam(name = "file") MultipartFile[] files
-    ) throws IOException {
-        memberService.uploadProfile(files);
+      Authentication authentication,
+      @RequestParam(name = "file") MultipartFile file
+    ) {
+        memberService.uploadProfile(authentication.getName(), file);
         return ApiResponse.ok(HttpStatus.CREATED.value());
+    }
+
+    @GetMapping("/my-info")
+    public ApiResponse<MemberDTO.MyPageResponse> getProfile(Principal principal) {
+        String email = principal.getName();
+        MemberDTO.MyPageResponse myPage = memberService.getMyPageInfo(email);
+        return ApiResponse.ok(HttpStatus.OK.value(), myPage);
+    }
+
+    @PostMapping("/my-info")
+    public ApiResponse<?> updateMemberInfo(@RequestBody MemberDTO.UpdateMemberRequest updateRequest) {
+        memberService.updateMemberInfo(updateRequest);
+        return ApiResponse.ok(HttpStatus.OK.value());
     }
 
 }

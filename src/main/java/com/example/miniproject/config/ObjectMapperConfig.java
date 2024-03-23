@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 
@@ -36,6 +37,8 @@ public class ObjectMapperConfig {
         module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
         module.addSerializer(LocalDate.class, new LocalDateSerializer());
         module.addDeserializer(LocalDate.class, new LocalDateDeserializer());
+        module.addSerializer(LocalTime.class, new LocalTimeSerializer());
+        module.addDeserializer(LocalTime.class, new LocalTimeDeserializer());
         objectMapper.registerModule(module);
 
         return objectMapper;
@@ -66,6 +69,20 @@ public class ObjectMapperConfig {
         @Override
         public LocalDate deserialize(JsonParser parser, DeserializationContext desc) throws IOException {
             return LocalDate.parse(parser.getValueAsString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
+    }
+
+    private static class LocalTimeSerializer extends JsonSerializer<LocalTime> {
+        @Override
+        public void serialize(LocalTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeString(value.format(DateTimeFormatter.ofPattern("HH:mm")));
+        }
+    }
+
+    private static class LocalTimeDeserializer extends JsonDeserializer<LocalTime> {
+        @Override
+        public LocalTime deserialize(JsonParser parser, DeserializationContext desc) throws IOException {
+            return LocalTime.parse(parser.getValueAsString(), DateTimeFormatter.ofPattern("HH:mm"));
         }
     }
 

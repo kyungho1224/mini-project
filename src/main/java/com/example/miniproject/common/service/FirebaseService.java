@@ -24,16 +24,16 @@ public class FirebaseService implements ImageService {
     @Value("${app.firebase-image-url}")
     private String imageUrl;
 
-    public String uploadFiles(MultipartFile file, String filename) throws Exception {
+    public String upload(MultipartFile file, String filename) throws IOException {
         Bucket bucket = StorageClient.getInstance().bucket(firebaseBucket);
         InputStream content = new ByteArrayInputStream(file.getBytes());
-        Blob blob = bucket.create(filename, content, file.getContentType());
-        return blob.getMediaLink();
+        bucket.create(filename, content, file.getContentType());
+        return getImageUrl(filename);
     }
 
     @Override
     public String getImageUrl(String name) {
-        return String.format(imageUrl, name);
+        return String.format(imageUrl, firebaseBucket, name);
     }
 
     @Override

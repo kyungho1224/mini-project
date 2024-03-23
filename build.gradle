@@ -39,6 +39,10 @@ dependencies {
 	/* firebase */
 	implementation 'com.google.firebase:firebase-admin:9.1.1'
 
+	// mysql json
+	implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.3.1'
+	implementation 'com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }

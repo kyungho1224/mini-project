@@ -14,6 +14,17 @@ public enum ApiErrorCode implements ErrorCode {
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED.value(), "Token is invalid"),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED.value(), "Token is expired"),
     TOKEN_ERROR(HttpStatus.UNAUTHORIZED.value(), "Unknown token error"),
+
+    NO_PERMISSION(HttpStatus.FORBIDDEN.value(), "You don't have permission"),
+
+    NOT_FOUND_HOTEL(HttpStatus.NOT_FOUND.value(), "Not found hotel"),
+
+    NOT_FOUND_ROOM(HttpStatus.NOT_FOUND.value(), "Not found room"),
+
+    NOT_FOUND_IMAGE(HttpStatus.NOT_FOUND.value(), "Not found image"),
+
+    NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), "Not found notice"),
+
     FIREBASE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase Error"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "server error"),
     ;

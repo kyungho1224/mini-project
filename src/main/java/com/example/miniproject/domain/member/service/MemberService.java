@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,12 +80,18 @@ public class MemberService {
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
     }
 
-    public void uploadProfile(MultipartFile[] files) throws IOException {
-        for (MultipartFile file : files) {
-            String filename = imageService.save(file);
-            String imageUrl = imageService.getImageUrl(filename);
-            log.error("MemberService uploadProfile filename: {}, imageUrl: {}", filename, imageUrl);
-        }
+    public void uploadProfile(String email, MultipartFile file) {
+        memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
+          .map(member -> {
+              try {
+                  String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
+                  member.updateProfileImage(imgUrl);
+              } catch (IOException e) {
+                  throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION, e.getMessage());
+              }
+              return member;
+          })
+          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
     }
 
     private void validatePasswordWithThrow(String password, String encodedPassword) {
@@ -108,6 +116,27 @@ public class MemberService {
         messageHelper.setText(body, true);
         messageHelper.setFrom(new InternetAddress(mailSenderUsername, "MASTER"));
         mailSender.send(mimeMessage);
+    }
+
+    public void updateMemberInfo(MemberDTO.UpdateMemberRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
+
+        validatePasswordWithThrow(request.getPassword(), member.getPassword());
+
+        member.updateAdditionalInfo(request.getZipCode(), request.getNation(), request.getCity(), request.getAddress());
+        memberRepository.save(member);
+
+    }
+
+    @Transactional(readOnly = true)
+    public MemberDTO.MyPageResponse getMyPageInfo(String email) {
+        return memberRepository.findByEmail(email)
+                .map(MemberDTO.MyPageResponse::of)
+                .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER));
     }
 
 }
