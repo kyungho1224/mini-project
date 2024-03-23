@@ -41,9 +41,6 @@ public class Order extends BaseEntity {
     @Column(columnDefinition = "int DEFAULT 0 COMMENT '아이 추가'")
     private int childCount;
 
-    @Column(columnDefinition = "int DEFAULT 0 COMMENT '유아 추가'")
-    private int babyCount;
-
     @Column(nullable = false, columnDefinition = "DECIMAL(11,4) NOT NULL COMMENT '결제 총액'")
     private BigDecimal totalPrice;
 
@@ -51,7 +48,7 @@ public class Order extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '결제 상태'")
     private OrderStatus status;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '요청 사항'")
+    @Column(columnDefinition = "VARCHAR(255) NOT NULL COMMENT '요청 사항'")
     private String comment;
 
     @Column(columnDefinition = "VARCHAR(255) COMMENT '우편번호'")
@@ -67,12 +64,10 @@ public class Order extends BaseEntity {
     private String address;
 
     public static Order saveAs(Member member, Room room, LocalDate checkIn, LocalDate checkOut,
-                               int adultCount, int childCount, int babyCount, BigDecimal totalPrice,
-                               String comment) {
+                               int adultCount, int childCount, BigDecimal totalPrice) {
         return Order.builder()
           .member(member).room(room).checkIn(checkIn).checkOut(checkOut)
-          .adultCount(adultCount).childCount(childCount).babyCount(babyCount).totalPrice(totalPrice)
-          .comment(comment)
+          .adultCount(adultCount).childCount(childCount).totalPrice(totalPrice)
           .build();
     }
 
@@ -80,11 +75,12 @@ public class Order extends BaseEntity {
         this.status = status;
     }
 
-    public void updateAdditionalInfo(String zipCode, String nation, String city, String address) {
+    public void updateAdditionalInfo(String zipCode, String nation, String city, String address, String comment) {
         this.zipCode = zipCode;
         this.nation = nation;
         this.city = city;
         this.address = address;
+        this.comment = comment;
     }
 
 }

@@ -127,4 +127,32 @@ public class HotelDTO {
 
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Getter
+    public static class SimpleResponse {
+
+        private Long id;
+
+        private Nation nation;
+
+        private String name;
+
+        private LocalTime checkIn;
+
+        private LocalTime checkOut;
+
+        public static SimpleResponse of(Hotel hotel) {
+            return SimpleResponse.builder()
+              .id(hotel.getId())
+              .nation(hotel.getNation())
+              .name(hotel.getName())
+              .checkIn(hotel.getCheckIn())
+              .checkOut(hotel.getCheckOut())
+              .build();
+        }
+
+    }
+
 }

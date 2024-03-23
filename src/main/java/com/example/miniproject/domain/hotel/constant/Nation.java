@@ -11,8 +11,7 @@ public enum Nation {
     VIETNAM("베트남"),
     PHILIPPINES("필리핀"),
     MALAYSIA("말레이시아"),
-    TAIWAN("대만"),
-    ;
+    TAIWAN("대만");
 
     private final String name;
 
