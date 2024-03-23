@@ -135,6 +135,10 @@ public class Hotel extends BaseEntity {
         favorites.add(favorite);
     }
 
+    public void removeFavorite(Favorite favorite) {
+        favorites.remove(favorite);
+    }
+
     public void addThumbnail(HotelThumbnail thumbnail) {
         thumbnails.add(thumbnail);
     }

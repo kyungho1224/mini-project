@@ -116,7 +116,35 @@ public class MemberDTO {
     @NoArgsConstructor
     @Builder
     @Getter
-    public static class MyPageResponse {
+    public static class SimpleResponse {
+
+        private Long id;
+
+        private String name;
+
+        private String email;
+
+        private String city;
+
+        private BigDecimal credit;
+
+        public static SimpleResponse of(Member member) {
+            return SimpleResponse.builder()
+              .id(member.getId())
+              .name(member.getName())
+              .email(member.getEmail())
+              .city(member.getCity())
+              .credit(member.getCredit())
+              .build();
+        }
+
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Getter
+    public static class DetailResponse {
 
         private Long id;
 
@@ -127,8 +155,6 @@ public class MemberDTO {
         private String email;
 
         private String birth;
-
-        private String password;
 
         private MemberStatus status;
 
@@ -144,14 +170,13 @@ public class MemberDTO {
 
         private BigDecimal credit;
 
-        public static MyPageResponse of(Member member) {
-            return MyPageResponse.builder()
+        public static DetailResponse of(Member member) {
+            return DetailResponse.builder()
                     .id(member.getId())
                     .profileImage(member.getProfileImage())
                     .name(member.getName())
                     .email(member.getEmail())
                     .birth(member.getBirth())
-                    .password(member.getPassword())
                     .status(member.getStatus())
                     .role(member.getRole())
                     .address(member.getAddress())

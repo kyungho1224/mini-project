@@ -4,14 +4,15 @@ import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,49 +22,53 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/join")
-    public ApiResponse<MemberDTO.JoinResponse> join(
+    public ResponseEntity<ApiResponse<MemberDTO.JoinResponse>> join(
       @Validated
       @RequestBody MemberDTO.JoinRequest request
     ) throws Exception {
-        return ApiResponse.ok(HttpStatus.CREATED.value(), memberService.create(request));
+        return ResponseEntity
+          .status(CREATED)
+          .body(ApiResponse.ok(memberService.create(request)));
     }
 
     @GetMapping("/verify")
-    public ApiResponse<Void> verify(
+    public ResponseEntity<Void> verify(
       @RequestParam String uuid
     ) {
         memberService.updateCertificate(uuid);
-        return ApiResponse.ok(HttpStatus.OK.value());
+        return ResponseEntity.status(ACCEPTED).build();
     }
 
     @PostMapping("/login")
-    public ApiResponse<MemberDTO.LoginResponse> login(
+    public ResponseEntity<ApiResponse<MemberDTO.LoginResponse>> login(
       @Validated
       @RequestBody MemberDTO.LoginRequest request
     ) {
-        return ApiResponse.ok(memberService.login(request));
+        return ResponseEntity.status(OK).body(ApiResponse.ok(memberService.login(request)));
     }
 
     @PostMapping("/upload")
-    public ApiResponse<Void> uploadProfile(
+    public ResponseEntity<Void> uploadProfile(
       Authentication authentication,
       @RequestParam(name = "file") MultipartFile file
     ) {
         memberService.uploadProfile(authentication.getName(), file);
-        return ApiResponse.ok(HttpStatus.CREATED.value());
+        return ResponseEntity.status(OK).build();
     }
 
     @GetMapping("/my-info")
-    public ApiResponse<MemberDTO.MyPageResponse> getProfile(Principal principal) {
+    public ResponseEntity<ApiResponse<MemberDTO.DetailResponse>> getProfile(Principal principal) {
         String email = principal.getName();
-        MemberDTO.MyPageResponse myPage = memberService.getMyPageInfo(email);
-        return ApiResponse.ok(HttpStatus.OK.value(), myPage);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(memberService.getMyPageInfo(email)));
     }
 
-    @PostMapping("/my-info")
-    public ApiResponse<?> updateMemberInfo(@RequestBody MemberDTO.UpdateMemberRequest updateRequest) {
-        memberService.updateMemberInfo(updateRequest);
-        return ApiResponse.ok(HttpStatus.OK.value());
+    @PatchMapping("/my-info")
+    public ResponseEntity<Void> updateMemberInfo(
+      Authentication authentication,
+      @RequestBody MemberDTO.UpdateMemberRequest updateRequest
+    ) {
+        memberService.updateMemberInfo(authentication.getName(), updateRequest);
+        return ResponseEntity.status(OK).build();
     }
 
 }

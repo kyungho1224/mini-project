@@ -1,5 +1,6 @@
 package com.example.miniproject.domain.member.repository;
 
+import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmailAndStatus(String email, MemberStatus status);
 
-    Optional<Member> findByEmail(String email);
+    Optional<Member> findByEmailAndRole(String email, MemberRole role);
 
 }

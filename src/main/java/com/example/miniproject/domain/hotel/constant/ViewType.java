@@ -12,8 +12,7 @@ public enum ViewType {
     GARDEN("가든뷰"),
     RIVER("리버뷰"),
     MOUNTAIN("마운틴뷰"),
-    NONE("뷰 없음"),
-    ;
+    NONE("뷰 없음");
 
     private final String type;
 

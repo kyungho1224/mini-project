@@ -8,8 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum RegisterStatus {
 
     VISIBLE("등록"),
-    INVISIBLE("삭제"),
-    ;
+    INVISIBLE("삭제");
 
     private final String status;
 

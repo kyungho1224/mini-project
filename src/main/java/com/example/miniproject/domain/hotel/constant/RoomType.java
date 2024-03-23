@@ -12,8 +12,7 @@ public enum RoomType {
     TWIN("트윈 룸"),
     SWEET("스위트 룸"),
     PARTY("파티 룸"),
-    VIP("VIP 룸"),
-    ;
+    VIP("VIP 룸");
 
     private final String type;
 
