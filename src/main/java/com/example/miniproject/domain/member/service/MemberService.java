@@ -1,6 +1,9 @@
 package com.example.miniproject.domain.member.service;
 
 import com.example.miniproject.common.service.ImageService;
+import com.example.miniproject.domain.hotel.dto.HotelDTO;
+import com.example.miniproject.domain.hotel.repository.FavoriteRepository;
+import com.example.miniproject.domain.hotel.repository.HotelRepository;
 import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.dto.MemberDTO;
@@ -16,6 +19,8 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -32,6 +37,8 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class MemberService {
+    private final FavoriteRepository favoriteRepository;
+    private final HotelRepository hotelRepository;
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -49,11 +56,11 @@ public class MemberService {
 
         String uuid = UUID.randomUUID().toString();
         Member newMember = Member.saveAs(
-          request.getEmail(),
-          passwordEncoder.encode(request.getPassword()),
-          request.getName(),
-          request.getBirth(),
-          uuid);
+            request.getEmail(),
+            passwordEncoder.encode(request.getPassword()),
+            request.getName(),
+            request.getBirth(),
+            uuid);
         sendMail(newMember, uuid);
         memberRepository.save(newMember);
         return MemberDTO.JoinResponse.of(newMember);
@@ -61,11 +68,11 @@ public class MemberService {
 
     public void updateCertificate(String uuid) {
         memberRepository.findByUuid(uuid)
-          .map(member -> {
-              member.updateStatus(MemberStatus.CERTIFICATED);
-              return member;
-          })
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription()));
+            .map(member -> {
+                member.updateStatus(MemberStatus.CERTIFICATED);
+                return member;
+            })
+            .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription()));
     }
 
     public MemberDTO.LoginResponse login(MemberDTO.LoginRequest request) {
@@ -101,18 +108,24 @@ public class MemberService {
         validatePasswordWithThrow(request.getPassword(), member.getPassword());
 
         member.updateAdditionalInfo(
-          request.getZipCode(), request.getNation(), request.getCity(), request.getAddress()
+            request.getZipCode(), request.getNation(), request.getCity(), request.getAddress()
         );
+    }
+
+    public Page<HotelDTO.Response> getMyFavoriteList(String email, Pageable pageable) {
+        Member member = getValidMemberOrThrow(email);
+        return favoriteRepository.findAllByMemberId(member.getId(), pageable)
+            .map(favorite -> HotelDTO.Response.of(favorite.getHotel()));
     }
 
     public Member getValidMemberOrThrow(String email) {
         return memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription()));
+            .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription()));
     }
 
     public Member getMasterMemberOrThrow(String email) {
         return memberRepository.findByEmailAndRole(email, MemberRole.MASTER)
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NO_PERMISSION.getDescription()));
+            .orElseThrow(() -> new ApiException(ApiErrorCode.NO_PERMISSION.getDescription()));
     }
 
     private void validatePasswordWithThrow(String password, String encodedPassword) {
@@ -129,11 +142,11 @@ public class MemberService {
         mimeMessage.addRecipients(Message.RecipientType.TO, newMember.getEmail());
         messageHelper.setSubject("가입 인증 메일");
         String body = "<div>"
-          + "<h1> 안녕하세요.</h1>"
-          + "<br>"
-          + "<p>아래 링크를 클릭하면 이메일 인증이 완료됩니다.<p>"
-          + "<a href='http://localhost:8080/api/members/verify?uuid=" + uuid + "'>인증 링크</a>"
-          + "</div>";
+            + "<h1> 안녕하세요.</h1>"
+            + "<br>"
+            + "<p>아래 링크를 클릭하면 이메일 인증이 완료됩니다.<p>"
+            + "<a href='http://localhost:8080/api/members/verify?uuid=" + uuid + "'>인증 링크</a>"
+            + "</div>";
         messageHelper.setText(body, true);
         messageHelper.setFrom(new InternetAddress(mailSenderUsername, "MASTER"));
         mailSender.send(mimeMessage);

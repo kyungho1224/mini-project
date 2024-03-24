@@ -1,9 +1,12 @@
 package com.example.miniproject.domain.member.controller;
 
 import com.example.miniproject.common.dto.ApiResponse;
+import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -23,17 +26,17 @@ public class MemberController {
 
     @PostMapping("/join")
     public ResponseEntity<ApiResponse<MemberDTO.JoinResponse>> join(
-      @Validated
-      @RequestBody MemberDTO.JoinRequest request
+        @Validated
+        @RequestBody MemberDTO.JoinRequest request
     ) throws Exception {
         return ResponseEntity
-          .status(CREATED)
-          .body(ApiResponse.ok(memberService.create(request)));
+            .status(CREATED)
+            .body(ApiResponse.ok(memberService.create(request)));
     }
 
     @GetMapping("/verify")
     public ResponseEntity<Void> verify(
-      @RequestParam String uuid
+        @RequestParam String uuid
     ) {
         memberService.updateCertificate(uuid);
         return ResponseEntity.status(ACCEPTED).build();
@@ -41,16 +44,16 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<MemberDTO.LoginResponse>> login(
-      @Validated
-      @RequestBody MemberDTO.LoginRequest request
+        @Validated
+        @RequestBody MemberDTO.LoginRequest request
     ) {
         return ResponseEntity.status(OK).body(ApiResponse.ok(memberService.login(request)));
     }
 
     @PostMapping("/upload")
     public ResponseEntity<Void> uploadProfile(
-      Authentication authentication,
-      @RequestParam(name = "file") MultipartFile file
+        Authentication authentication,
+        @RequestParam(name = "file") MultipartFile file
     ) {
         memberService.uploadProfile(authentication.getName(), file);
         return ResponseEntity.status(OK).build();
@@ -64,11 +67,20 @@ public class MemberController {
 
     @PatchMapping("/my-info")
     public ResponseEntity<Void> updateMemberInfo(
-      Authentication authentication,
-      @RequestBody MemberDTO.UpdateMemberRequest updateRequest
+        Authentication authentication,
+        @RequestBody MemberDTO.UpdateMemberRequest updateRequest
     ) {
         memberService.updateMemberInfo(authentication.getName(), updateRequest);
         return ResponseEntity.status(OK).build();
+    }
+
+    @GetMapping("/my-favorite")
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> favoriteList(
+        Authentication authentication,
+        Pageable pageable
+    ) {
+        Page<HotelDTO.Response> myFavoriteList = memberService.getMyFavoriteList(authentication.getName(), pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(myFavoriteList));
     }
 
 }
