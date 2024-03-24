@@ -4,6 +4,7 @@ import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.member.service.MemberService;
+import com.example.miniproject.domain.order.dto.OrderDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,8 +80,19 @@ public class MemberController {
         Authentication authentication,
         Pageable pageable
     ) {
-        Page<HotelDTO.Response> myFavoriteList = memberService.getMyFavoriteList(authentication.getName(), pageable);
+        Page<HotelDTO.Response> myFavoriteList =
+            memberService.getMyFavoriteList(authentication.getName(), pageable);
         return ResponseEntity.status(OK).body(ApiResponse.ok(myFavoriteList));
+    }
+
+    @GetMapping("/my-cart")
+    public ResponseEntity<ApiResponse<Page<OrderDTO.OrderDetailResponse>>> cartList(
+        Authentication authentication,
+        Pageable pageable
+    ) {
+        Page<OrderDTO.OrderDetailResponse> myCartList =
+            memberService.getMyCartList(authentication.getName(), pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(myCartList));
     }
 
 }

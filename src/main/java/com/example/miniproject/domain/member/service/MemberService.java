@@ -10,6 +10,9 @@ import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.member.dto.TokenDTO;
 import com.example.miniproject.domain.member.entity.Member;
 import com.example.miniproject.domain.member.repository.MemberRepository;
+import com.example.miniproject.domain.order.constant.OrderStatus;
+import com.example.miniproject.domain.order.dto.OrderDTO;
+import com.example.miniproject.domain.order.repository.OrderRepository;
 import com.example.miniproject.exception.ApiErrorCode;
 import com.example.miniproject.exception.ApiException;
 import com.example.miniproject.util.JwtTokenUtil;
@@ -37,6 +40,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class MemberService {
+    private final OrderRepository orderRepository;
     private final FavoriteRepository favoriteRepository;
     private final HotelRepository hotelRepository;
 
@@ -116,6 +120,13 @@ public class MemberService {
         Member member = getValidMemberOrThrow(email);
         return favoriteRepository.findAllByMemberId(member.getId(), pageable)
             .map(favorite -> HotelDTO.Response.of(favorite.getHotel()));
+    }
+
+    public Page<OrderDTO.OrderDetailResponse> getMyCartList(String email, Pageable pageable) {
+        // 전체 주문 목록 중 내 것만 가져오기
+        Member member = getValidMemberOrThrow(email);
+        return orderRepository.findAllByMemberIdAndStatus(member.getId(), OrderStatus.PAYMENT_PENDING, pageable)
+            .map(OrderDTO.OrderDetailResponse::of);
     }
 
     public Member getValidMemberOrThrow(String email) {
