@@ -123,10 +123,19 @@ public class MemberService {
     }
 
     public Page<OrderDTO.OrderDetailResponse> getMyCartList(String email, Pageable pageable) {
-        // 전체 주문 목록 중 내 것만 가져오기
         Member member = getValidMemberOrThrow(email);
         return orderRepository.findAllByMemberIdAndStatus(member.getId(), OrderStatus.PAYMENT_PENDING, pageable)
             .map(OrderDTO.OrderDetailResponse::of);
+    }
+
+    public void removeCartItem(String email, Long orderId) {
+        Member member = getValidMemberOrThrow(email);
+        orderRepository.findByIdAndMemberIdAndStatus(orderId, member.getId(), OrderStatus.PAYMENT_PENDING)
+            .map(order -> {
+                order.updateStatus(OrderStatus.WITHDRAW_ORDER);
+                return order;
+            })
+            .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ORDER.getDescription()));
     }
 
     public Member getValidMemberOrThrow(String email) {

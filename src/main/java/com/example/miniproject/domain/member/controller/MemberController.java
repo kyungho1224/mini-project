@@ -95,4 +95,13 @@ public class MemberController {
         return ResponseEntity.status(OK).body(ApiResponse.ok(myCartList));
     }
 
+    @PatchMapping("/my-cart/{orderId}")
+    public ResponseEntity<Void> unregisterCartItem(
+        Authentication authentication,
+        @PathVariable Long orderId
+    ) {
+        memberService.removeCartItem(authentication.getName(), orderId);
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
 }
