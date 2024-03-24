@@ -104,4 +104,14 @@ public class MemberController {
         return ResponseEntity.status(NO_CONTENT).build();
     }
 
+    @GetMapping("/my-order")
+    public ResponseEntity<ApiResponse<Page<OrderDTO.OrderDetailResponse>>> orderList(
+        Authentication authentication,
+        Pageable pageable
+    ) {
+        Page<OrderDTO.OrderDetailResponse> myOrderList =
+            memberService.getMyOrderList(authentication.getName(), pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(myOrderList));
+    }
+
 }

@@ -3,7 +3,6 @@ package com.example.miniproject.domain.member.service;
 import com.example.miniproject.common.service.ImageService;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.hotel.repository.FavoriteRepository;
-import com.example.miniproject.domain.hotel.repository.HotelRepository;
 import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.dto.MemberDTO;
@@ -42,8 +41,6 @@ import java.util.UUID;
 public class MemberService {
     private final OrderRepository orderRepository;
     private final FavoriteRepository favoriteRepository;
-    private final HotelRepository hotelRepository;
-
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
@@ -136,6 +133,12 @@ public class MemberService {
                 return order;
             })
             .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ORDER.getDescription()));
+    }
+
+    public Page<OrderDTO.OrderDetailResponse> getMyOrderList(String email, Pageable pageable) {
+        Member member = getValidMemberOrThrow(email);
+        return orderRepository.findAllByMemberIdAndStatus(member.getId(), OrderStatus.PAYMENT_COMPLETED, pageable)
+            .map(OrderDTO.OrderDetailResponse::of);
     }
 
     public Member getValidMemberOrThrow(String email) {
