@@ -59,9 +59,23 @@ public class OrderService {
     }
 
     public void updateOrderInfo(
-      Long orderId, OrderDTO.OrderInfoRequest request) {
+      String email, Long orderId, OrderDTO.OrderInfoRequest request) {
         Order order = orderRepository.findById(orderId)
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ORDER.getDescription()));
+
+        if (!order.getMember().getEmail().equals(email)) {
+            throw new ApiException(ApiErrorCode.NOT_MATCH_MEMBER.getDescription());
+        }
+
+        Member member = order.getMember();
+        BigDecimal memberCredit = member.getCredit();
+
+        if (order.getTotalPrice().compareTo(memberCredit) > 0) {
+            throw new ApiException(ApiErrorCode.LACK_CREDIT.getDescription());
+        }
+
+        member.subtractCredit(order.getTotalPrice());
+        memberService.updateMember(member);
 
         if (!order.getStatus().equals(OrderStatus.PAYMENT_PENDING)) {
             throw new ApiException(ApiErrorCode.NOT_FOUND_ORDER.getDescription());
