@@ -41,7 +41,8 @@ public class Room extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '판매 상태'")
     private ActiveStatus activeStatus;
 
-    @Column(nullable = false, columnDefinition = "int NOT NULL COMMENT '침대 수'")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '침대 타입'")
     private BedType bedType;
 
     @Column(nullable = false, columnDefinition = "int DEFAULT 0 COMMENT '표준 인원'")

@@ -8,6 +8,7 @@ import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.dto.MemberDTO;
 import com.example.miniproject.domain.member.dto.TokenDTO;
 import com.example.miniproject.domain.member.entity.Member;
+import com.example.miniproject.domain.member.repository.MemberCacheRepository;
 import com.example.miniproject.domain.member.repository.MemberRepository;
 import com.example.miniproject.domain.order.constant.OrderStatus;
 import com.example.miniproject.domain.order.dto.OrderDTO;
@@ -32,7 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -47,6 +47,7 @@ public class MemberService {
     private final JavaMailSender mailSender;
     private final JwtTokenUtil jwtTokenUtil;
     private final ImageService imageService;
+    private final MemberCacheRepository memberCacheRepository;
 
     @Value("${spring.mail.username}")
     private String mailSenderUsername;
@@ -84,6 +85,8 @@ public class MemberService {
 
         TokenDTO tokenDTO = jwtTokenUtil.generatedToken(member.getEmail());
         member.updateRefreshToken(tokenDTO.getRefreshToken());
+
+        memberCacheRepository.setMember(member);
 
         return MemberDTO.LoginResponse.of(member, tokenDTO.getAccessToken());
     }
@@ -147,8 +150,9 @@ public class MemberService {
     }
 
     public Member getValidMemberOrThrow(String email) {
-        return memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
-            .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription()));
+        return memberCacheRepository.getMember(email)
+            .orElseGet(() -> memberRepository.findByEmailAndStatus(email, MemberStatus.CERTIFICATED)
+                .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_MEMBER.getDescription())));
     }
 
     public Member getMasterMemberOrThrow(String email) {
