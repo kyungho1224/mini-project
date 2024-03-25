@@ -63,23 +63,19 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_ORDER.getDescription()));
 
-        // 결제 정보를 등록한 회원과 결제를 요청하는 회원이 동일한지 확인
         if (!order.getMember().getEmail().equals(email)) {
             throw new ApiException(ApiErrorCode.NOT_MATCH_MEMBER.getDescription());
         }
 
-        // 회원의 보유 크레딧 확인
         Member member = order.getMember();
         BigDecimal memberCredit = member.getCredit();
 
-        // 결제 금액이 회원의 보유 크레딧보다 많을 경우 예외 처리
         if (order.getTotalPrice().compareTo(memberCredit) > 0) {
             throw new ApiException(ApiErrorCode.LACK_CREDIT.getDescription());
         }
 
-        // 결제 완료 및 크레딧 차감
         member.subtractCredit(order.getTotalPrice());
-        memberService.updateMember(member); // 회원 정보 업데이트를 위한 메소드 호출. 구현 필요.
+        memberService.updateMember(member);
 
         if (!order.getStatus().equals(OrderStatus.PAYMENT_PENDING)) {
             throw new ApiException(ApiErrorCode.NOT_FOUND_ORDER.getDescription());
