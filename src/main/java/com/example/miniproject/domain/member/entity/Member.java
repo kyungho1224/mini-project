@@ -3,6 +3,8 @@ package com.example.miniproject.domain.member.entity;
 import com.example.miniproject.common.entity.BaseEntity;
 import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
+import com.example.miniproject.exception.ApiErrorCode;
+import com.example.miniproject.exception.ApiException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -95,6 +97,13 @@ public class Member extends BaseEntity {
         this.nation = nation;
         this.city = city;
         this.address = address;
+    }
+
+    public void subtractCredit(BigDecimal totalPrice) {
+        if (credit.compareTo(totalPrice) < 0) {
+            throw new ApiException(ApiErrorCode.LACK_CREDIT.getDescription());
+        }
+        this.credit = credit.subtract(totalPrice);
     }
 
 }

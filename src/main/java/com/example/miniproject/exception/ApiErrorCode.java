@@ -10,6 +10,7 @@ public enum ApiErrorCode {
     DUPLICATED_EMAIL("Email is duplicated"),
     NOT_FOUND_MEMBER("Not found member"),
     NOT_MATCH_PASSWORD("Not match password"),
+    NOT_MATCH_MEMBER("Not match member"),
     INVALID_TOKEN("Token is invalid"),
     EXPIRED_TOKEN("Token is expired"),
     TOKEN_ERROR("Unknown token error"),
@@ -30,7 +31,9 @@ public enum ApiErrorCode {
     INTERNAL_SERVER_ERROR("server error"),
 
     NOT_AVAILABLE_ROOM("Room is not available"),
-    EXCEEDS_MAXIMUM_CAPACITY("Exceeds maximum capacity");
+    EXCEEDS_MAXIMUM_CAPACITY("Exceeds maximum capacity"),
+
+    LACK_CREDIT("lack credit");
 
     private final String description;
 

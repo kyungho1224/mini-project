@@ -32,9 +32,10 @@ public class OrderController {
 
     @PatchMapping("/{orderId}")
     public ResponseEntity<Void> updateOrderInfo(
+      Authentication authentication,
       @PathVariable Long orderId,
       @RequestBody OrderDTO.OrderInfoRequest request) {
-        orderService.updateOrderInfo(orderId, request);
+        orderService.updateOrderInfo(authentication.getName(), orderId, request);
         return ResponseEntity.status(NO_CONTENT).build();
     }
 

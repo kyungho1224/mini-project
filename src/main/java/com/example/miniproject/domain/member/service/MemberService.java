@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -111,6 +112,10 @@ public class MemberService {
         member.updateAdditionalInfo(
             request.getZipCode(), request.getNation(), request.getCity(), request.getAddress()
         );
+    }
+
+    public void updateMember(Member member) {
+        memberRepository.save(member);
     }
 
     public Page<HotelDTO.Response> getMyFavoriteList(String email, Pageable pageable) {
