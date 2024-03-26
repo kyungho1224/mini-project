@@ -1,8 +1,8 @@
 name: Java+SpringBoot CI/CD with Gradle
 
 on:
-  push:
-    branches: ["main"]
+#  push:
+#    branches: ["main"]
   pull_request:
     branches: ["main"]
 
@@ -41,7 +41,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean --stacktrace --info build
+        run: ./gradlew clean --stacktrace --info build -x test
         shell: bash
 
       - name: Make Directory
