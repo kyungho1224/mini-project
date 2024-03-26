@@ -2,9 +2,13 @@ name: Java+SpringBoot CI/CD with Gradle
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
   pull_request:
-    branches: ["main"]
+    branches:
+      - main
+    types:
+      - closed
 
 env:
   AWS_REGION: ap-northeast-2
