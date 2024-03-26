@@ -3,7 +3,6 @@ package com.example.miniproject.domain.hotel.controller;
 import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
-import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.service.HotelService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,26 +50,24 @@ public class HotelController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getAllVisibleHotels(Pageable pageable) {
-        Page<Hotel> hotelPage = hotelService.findAllVisibleHotels(pageable);
-        Page<HotelDTO.Response> responsePage = hotelPage.map(HotelDTO.Response::of);
-        return ResponseEntity.status(OK).body(ApiResponse.ok(responsePage));
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getAllVisibleHotels(
+            Pageable pageable) {
+        Page<HotelDTO.Response> hotelPage = hotelService.findAllVisibleHotels(pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
     @GetMapping("/nation/{nation}")
-    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getHotelsByNation(@PathVariable Nation nation, Pageable pageable) {
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getHotelsByNation(
+            @PathVariable Nation nation, Pageable pageable) {
         Page<HotelDTO.Response> hotelPage = hotelService.findByNation(nation, pageable);
         return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
     @GetMapping("/name/{name}")
     public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> searchHotelsByName(
-      @PathVariable String name,
-      Pageable pageable) {
-        Page<Hotel> hotels = hotelService.findHotelsByNameAndVisible(name, pageable);
-        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
-        return ResponseEntity.status(OK)
-          .body(ApiResponse.ok(responsePage));
+      @PathVariable String name, Pageable pageable) {
+        Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNameAndVisible(name, pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
     @GetMapping("/{hotelId}")

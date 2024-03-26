@@ -46,17 +46,22 @@ public class HotelService {
         uploadThumbnail(email, savedHotel.getId(), files);
     }
 
-    public Page<Hotel> findAllVisibleHotels(Pageable pageable) {
-        return hotelRepository.findAllByRegisterStatus(pageable, RegisterStatus.VISIBLE);
+    public Page<HotelDTO.Response> findAllVisibleHotels(Pageable pageable) {
+        Page<Hotel> hotels = hotelRepository.findAllByRegisterStatus(pageable, RegisterStatus.VISIBLE);
+        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
+        return responsePage;
     }
 
     public Page<HotelDTO.Response> findByNation(Nation nation, Pageable pageable) {
         Page<Hotel> hotels = hotelRepository.findAllByNationAndRegisterStatus(pageable, nation, RegisterStatus.VISIBLE);
-        return hotels.map(HotelDTO.Response::of);
+        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
+        return responsePage;
     }
 
-    public Page<Hotel> findHotelsByNameAndVisible(String name, Pageable pageable) {
-        return hotelRepository.findByNameContainingAndRegisterStatus(name, RegisterStatus.VISIBLE, pageable);
+    public Page<HotelDTO.Response> findHotelsByNameAndVisible(String name, Pageable pageable) {
+        Page<Hotel> hotels = hotelRepository.findByNameContainingAndRegisterStatus(name, RegisterStatus.VISIBLE, pageable);
+        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
+        return responsePage;
     }
 
     public HotelDTO.Response findHotelById(Long hotelId) {
