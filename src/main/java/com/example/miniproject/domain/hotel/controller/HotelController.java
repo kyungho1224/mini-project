@@ -51,26 +51,26 @@ public class HotelController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getAllVisibleHotels(Pageable pageable) {
-        Page<Hotel> hotelPage = hotelService.findAllVisibleHotels(pageable);
-        Page<HotelDTO.Response> responsePage = hotelPage.map(HotelDTO.Response::of);
-        return ResponseEntity.status(OK).body(ApiResponse.ok(responsePage));
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getAllVisibleHotels(
+            Pageable pageable) {
+        Page<HotelDTO.Response> hotelPage = hotelService.findAllVisibleHotels(pageable);
+//        Page<HotelDTO.Response> responsePage = hotelPage.map(HotelDTO.Response::of);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
     @GetMapping("/nation/{nation}")
-    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getHotelsByNation(@PathVariable Nation nation, Pageable pageable) {
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getHotelsByNation(
+            @PathVariable Nation nation, Pageable pageable) {
         Page<HotelDTO.Response> hotelPage = hotelService.findByNation(nation, pageable);
         return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
     @GetMapping("/name/{name}")
     public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> searchHotelsByName(
-      @PathVariable String name,
-      Pageable pageable) {
-        Page<Hotel> hotels = hotelService.findHotelsByNameAndVisible(name, pageable);
-        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
-        return ResponseEntity.status(OK)
-          .body(ApiResponse.ok(responsePage));
+      @PathVariable String name, Pageable pageable) {
+        Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNameAndVisible(name, pageable);
+//        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
     @GetMapping("/{hotelId}")
