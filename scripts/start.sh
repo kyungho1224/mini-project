@@ -4,7 +4,7 @@
 PROJECT_ROOT="/home/ubuntu/app"
 
 # 실행할 jar 파일 경로
-JAR_FILE="$PROJECT_ROOT/build/libs/*SNAPSHOT.jar"
+JAR_FILE="$PROJECT_ROOT/build/libs/app.jar"
 
 # 애플리케이션의 로그를 저장할 파일 경로
 APP_LOG="$PROJECT_ROOT/application.log"

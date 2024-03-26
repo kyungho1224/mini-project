@@ -4,7 +4,7 @@
 PROJECT_ROOT="/home/ubuntu/app"
 
 # 실행할 jar 파일 경로
-JAR_FILE="$PROJECT_ROOT/build/libs/*SNAPSHOT.jar"
+JAR_FILE="$PROJECT_ROOT/build/libs/app.jar"
 
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
