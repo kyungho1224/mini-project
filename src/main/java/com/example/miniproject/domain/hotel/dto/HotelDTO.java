@@ -96,33 +96,39 @@ public class HotelDTO {
 
         public static Response of(Hotel hotel) {
 
-            List<Room> rooms = hotel.getRooms().stream()
-              .filter(room -> room.getRegisterStatus() == RegisterStatus.VISIBLE)
-              .toList();
+            List<Room> rooms = List.of();
+            if (hotel.getRooms() != null && !hotel.getRooms().isEmpty()) {
+                rooms = hotel.getRooms().stream()
+                    .filter(room -> room.getRegisterStatus() == RegisterStatus.VISIBLE)
+                    .toList();
+            }
 
-            List<Notice> notices = hotel.getNotices().stream()
-              .filter(notice -> notice.getRegisterStatus() == RegisterStatus.VISIBLE)
-              .toList();
+            List<Notice> notices = List.of();
+            if (hotel.getNotices() != null && !hotel.getNotices().isEmpty()) {
+                notices = hotel.getNotices().stream()
+                    .filter(notice -> notice.getRegisterStatus() == RegisterStatus.VISIBLE)
+                    .toList();
+            }
 
             return Response.builder()
-              .id(hotel.getId())
-              .nation(hotel.getNation())
-              .name(hotel.getName())
-              .description(hotel.getDescription())
-              .thumbnails(ThumbnailDTO.HotelThumbnailsResponse.of(hotel.getThumbnails()))
-              .notices(NoticeDTO.Response.of(notices))
-              .basicOptions(hotel.getBasicOptions())
-              .checkIn(hotel.getCheckIn())
-              .checkOut(hotel.getCheckOut())
-              .smokingRule(hotel.getSmokingRule())
-              .petRule(hotel.getPetRule())
-              .poolOpeningTime(hotel.getPoolOpeningTime())
-              .poolClosingTime(hotel.getPoolClosingTime())
-              .activeStatus(hotel.getActiveStatus())
-              .latitude(hotel.getLatitude())
-              .longitude(hotel.getLongitude())
-              .rooms(RoomDTO.Response.of(rooms))
-              .build();
+                .id(hotel.getId())
+                .nation(hotel.getNation())
+                .name(hotel.getName())
+                .description(hotel.getDescription())
+                .thumbnails(ThumbnailDTO.HotelThumbnailsResponse.of(hotel.getThumbnails()))
+                .notices(NoticeDTO.Response.of(notices))
+                .basicOptions(hotel.getBasicOptions())
+                .checkIn(hotel.getCheckIn())
+                .checkOut(hotel.getCheckOut())
+                .smokingRule(hotel.getSmokingRule())
+                .petRule(hotel.getPetRule())
+                .poolOpeningTime(hotel.getPoolOpeningTime())
+                .poolClosingTime(hotel.getPoolClosingTime())
+                .activeStatus(hotel.getActiveStatus())
+                .latitude(hotel.getLatitude())
+                .longitude(hotel.getLongitude())
+                .rooms(RoomDTO.Response.of(rooms))
+                .build();
         }
 
     }
@@ -145,12 +151,12 @@ public class HotelDTO {
 
         public static SimpleResponse of(Hotel hotel) {
             return SimpleResponse.builder()
-              .id(hotel.getId())
-              .nation(hotel.getNation())
-              .name(hotel.getName())
-              .checkIn(hotel.getCheckIn())
-              .checkOut(hotel.getCheckOut())
-              .build();
+                .id(hotel.getId())
+                .nation(hotel.getNation())
+                .name(hotel.getName())
+                .checkIn(hotel.getCheckIn())
+                .checkOut(hotel.getCheckOut())
+                .build();
         }
 
     }

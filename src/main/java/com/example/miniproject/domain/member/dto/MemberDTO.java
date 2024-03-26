@@ -17,6 +17,7 @@ public class MemberDTO {
 
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     @Getter
     public static class JoinRequest {
 
@@ -63,6 +64,7 @@ public class MemberDTO {
 
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     @Getter
     public static class LoginRequest {
 
@@ -191,6 +193,7 @@ public class MemberDTO {
 
     @AllArgsConstructor
     @NoArgsConstructor
+    @Builder
     @Getter
     public static class UpdateMemberRequest {
         private Long id;
