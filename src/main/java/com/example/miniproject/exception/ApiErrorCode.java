@@ -2,34 +2,39 @@ package com.example.miniproject.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @Getter
-public enum ApiErrorCode implements ErrorCode {
+public enum ApiErrorCode {
 
-    DUPLICATED_EMAIL(HttpStatus.CONFLICT.value(), "Email is duplicated"),
-    NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND.value(), "Not found member"),
-    NOT_MATCH_PASSWORD(HttpStatus.UNAUTHORIZED.value(), "Not match password"),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED.value(), "Token is invalid"),
-    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED.value(), "Token is expired"),
-    TOKEN_ERROR(HttpStatus.UNAUTHORIZED.value(), "Unknown token error"),
+    DUPLICATED_EMAIL("Email is duplicated"),
+    NOT_FOUND_MEMBER("Not found member"),
+    NOT_MATCH_PASSWORD("Not match password"),
+    NOT_MATCH_MEMBER("Not match member"),
+    INVALID_TOKEN("Token is invalid"),
+    EXPIRED_TOKEN("Token is expired"),
+    TOKEN_ERROR("Unknown token error"),
 
-    NO_PERMISSION(HttpStatus.FORBIDDEN.value(), "You don't have permission"),
+    NO_PERMISSION("You don't have permission"),
 
-    NOT_FOUND_HOTEL(HttpStatus.NOT_FOUND.value(), "Not found hotel"),
+    NOT_FOUND_HOTEL("Not found hotel"),
 
-    NOT_FOUND_ROOM(HttpStatus.NOT_FOUND.value(), "Not found room"),
+    NOT_FOUND_ROOM("Not found room"),
 
-    NOT_FOUND_IMAGE(HttpStatus.NOT_FOUND.value(), "Not found image"),
+    NOT_FOUND_IMAGE("Not found image"),
 
-    NOT_FOUND_NOTICE(HttpStatus.NOT_FOUND.value(), "Not found notice"),
+    NOT_FOUND_NOTICE("Not found notice"),
 
-    FIREBASE_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Firebase Error"),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "server error"),
-    ;
+    NOT_FOUND_ORDER("Not found order"),
 
-    private final Integer httpStatusCode;
+    FIREBASE_EXCEPTION("Firebase Error"),
+    INTERNAL_SERVER_ERROR("server error"),
+
+    NOT_AVAILABLE_ROOM("Room is not available"),
+    EXCEEDS_MAXIMUM_CAPACITY("Exceeds maximum capacity"),
+
+    LACK_CREDIT("lack credit");
+
     private final String description;
 
 }

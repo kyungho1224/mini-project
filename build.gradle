@@ -43,6 +43,9 @@ dependencies {
 	implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.3.1'
 	implementation 'com.fasterxml.jackson.module:jackson-module-jakarta-xmlbind-annotations'
 
+	// Redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }

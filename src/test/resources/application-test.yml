@@ -1,0 +1,46 @@
+spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://52.78.12.252:3306/mini
+    username: team4
+    password: team4!@#$
+  data:
+    redis:
+      url: redis://52.78.12.252:6379
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: dev.kyungho.kim@gmail.com
+    password: bubduiphndvwlyey
+    properties:
+      mail:
+        smtp.auth: true
+        smtp.timeout: 50000
+        smtp.starttls.enable: true
+    protocol: smtp
+    default-encoding: UTF-8
+
+
+token:
+  secret:
+    key: springbootJWTHelperTokenKeyValue123!@
+  access-token:
+    plus-hour: 1
+  refresh-token:
+    plus-hour: 12
+
+app:
+  firebase-config-file: src/main/resources/serviceAccountKey.json
+  firebase-bucket: mini-project-5e332.appspot.com
+  firebase-image-url: https://firebasestorage.googleapis.com/v0/b/%s/o/%s?alt=media

@@ -108,4 +108,29 @@ public class RoomDTO {
 
     }
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @Getter
+    public static class SimpleResponse {
+
+        private Long id;
+
+        private RoomType type;
+
+        private BedType bedType;
+
+        private ViewType viewType;
+
+        public static SimpleResponse of(Room room) {
+            return SimpleResponse.builder()
+              .id(room.getId())
+              .type(room.getType())
+              .bedType(room.getBedType())
+              .viewType(room.getViewType())
+              .build();
+        }
+
+    }
+
 }

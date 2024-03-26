@@ -3,7 +3,6 @@ package com.example.miniproject.domain.hotel.controller;
 import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
-import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.service.HotelService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class HotelController {
     private final ObjectMapper objectMapper;
 
     @PostMapping
-    public ApiResponse<String> register(
+    public ResponseEntity<Void> register(
       Authentication authentication,
       @Validated
       @RequestParam(name = "request") String json,
@@ -45,49 +46,49 @@ public class HotelController {
         } else {
             hotelService.create(authentication.getName(), request);
         }
-        return ApiResponse.ok(HttpStatus.CREATED.value(), "Registered successfully");
+        return ResponseEntity.status(CREATED).build();
     }
 
     @GetMapping
-    public ApiResponse<Page<HotelDTO.Response>> getAllVisibleHotels(Pageable pageable) {
-        Page<Hotel> hotelPage = hotelService.findAllVisibleHotels(pageable);
-        Page<HotelDTO.Response> responsePage = hotelPage.map(HotelDTO.Response::of);
-        return ApiResponse.ok(HttpStatus.OK.value(), responsePage);
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getAllVisibleHotels(
+            Pageable pageable) {
+        Page<HotelDTO.Response> hotelPage = hotelService.findAllVisibleHotels(pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
     @GetMapping("/nation/{nation}")
-    public ApiResponse<Page<HotelDTO.Response>> getHotelsByNation(@PathVariable Nation nation, Pageable pageable) {
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> getHotelsByNation(
+            @PathVariable Nation nation, Pageable pageable) {
         Page<HotelDTO.Response> hotelPage = hotelService.findByNation(nation, pageable);
-        return ApiResponse.ok(HttpStatus.OK.value(), hotelPage);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
     @GetMapping("/name/{name}")
-    public ApiResponse<Page<HotelDTO.Response>> searchHotelsByName(
-      @PathVariable String name,
-      Pageable pageable) {
-        Page<Hotel> hotels = hotelService.findHotelsByNameAndVisible(name, pageable);
-        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
-        return ApiResponse.ok(HttpStatus.OK.value(), responsePage);
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> searchHotelsByName(
+      @PathVariable String name, Pageable pageable) {
+        Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNameAndVisible(name, pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
     @GetMapping("/{hotelId}")
-    public ApiResponse<HotelDTO.Response> getAllVisibleRoomsByHotelId(@PathVariable Long hotelId) {
-        return ApiResponse.ok(HttpStatus.OK.value(), hotelService.findHotelById(hotelId));
+    public ResponseEntity<ApiResponse<HotelDTO.Response>> getAllVisibleRoomsByHotelId(@PathVariable Long hotelId) {
+        return ResponseEntity.status(OK)
+          .body(ApiResponse.ok(hotelService.findHotelById(hotelId)));
     }
 
     @PatchMapping("/{hotelId}")
-    public ApiResponse<Void> updateData(
+    public ResponseEntity<Void> updateData(
       Authentication authentication,
       @PathVariable Long hotelId,
       @Validated
       @RequestBody HotelDTO.Request request
     ) {
         hotelService.updateData(authentication.getName(), hotelId, request);
-        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
     @PatchMapping("/{hotelId}/thumbnails/{thumbnailId}")
-    public ApiResponse<Void> updateThumbnail(
+    public ResponseEntity<Void> updateThumbnail(
       Authentication authentication,
       @PathVariable Long hotelId,
       @PathVariable Long thumbnailId,
@@ -96,23 +97,25 @@ public class HotelController {
         if (file != null) {
             hotelService.updateThumbnail(authentication.getName(), hotelId, thumbnailId, file);
         }
-//        Optional.ofNullable(file)
-//          .ifPresentOrElse(image ->
-//            hotelService.updateThumbnail(authentication.getName(), hotelId, thumbnailId, image),
-//            () -> {
-//              throw new ApiException(ApiErrorCode.NOT_FOUND_ROOM);
-//            }
-//          );
-        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
     @DeleteMapping("/{hotelId}")
-    public ApiResponse<Void> unregister(
+    public ResponseEntity<Void> unregister(
       Authentication authentication,
       @PathVariable Long hotelId
     ) {
         hotelService.unregister(authentication.getName(), hotelId);
-        return ApiResponse.ok(HttpStatus.NO_CONTENT.value());
+        return ResponseEntity.status(NO_CONTENT).build();
+    }
+
+    @PostMapping("/{hotelId}/favorite")
+    public ResponseEntity<Void> favorite(
+      Authentication authentication,
+      @PathVariable Long hotelId
+    ) {
+        hotelService.toggleFavorite(authentication.getName(), hotelId);
+        return ResponseEntity.status(NO_CONTENT).build();
     }
 
 }
