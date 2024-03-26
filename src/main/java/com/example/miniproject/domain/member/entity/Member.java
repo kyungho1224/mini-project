@@ -80,6 +80,10 @@ public class Member extends BaseEntity {
           .build();
     }
 
+    public void updateRole(MemberRole role) {
+        this.role = role;
+    }
+
     public void updateStatus(MemberStatus status) {
         this.status = status;
     }
