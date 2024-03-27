@@ -20,6 +20,7 @@ public class RoomDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class Request {
 
         @NotNull(message = "객실 타입은 필수 입력입니다")
