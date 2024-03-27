@@ -96,6 +96,8 @@ public class MemberService {
         try {
             String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
             member.updateProfileImage(imgUrl);
+            log.info("member upload profile image url : {}", imgUrl);
+            memberRepository.save(member);
         } catch (IOException e) {
             throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION.getDescription());
         }
@@ -177,7 +179,7 @@ public class MemberService {
             + "<h1> 안녕하세요.</h1>"
             + "<br>"
             + "<p>아래 링크를 클릭하면 이메일 인증이 완료됩니다.<p>"
-            + "<a href='http://localhost:8080/api/members/verify?uuid=" + uuid + "'>인증 링크</a>"
+            + "<a href='http://52.78.12.252:8080/api/members/verify?uuid=" + uuid + "'>인증 링크</a>"
             + "</div>";
         messageHelper.setText(body, true);
         messageHelper.setFrom(new InternetAddress(mailSenderUsername, "MASTER"));
