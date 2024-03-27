@@ -6,24 +6,29 @@ import com.google.firebase.FirebaseOptions;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
 public class FirebaseConfig {
 
     @PostConstruct
     public void init() {
-        try {
-            FileInputStream fis = new FileInputStream("src/main/resources/serviceAccountKey.json");
+            InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
             FirebaseOptions.Builder optionBuilder = FirebaseOptions.builder();
-            FirebaseOptions options = optionBuilder.setCredentials(GoogleCredentials.fromStream(fis)).build();
-            FirebaseApp.initializeApp(options);
-            if (FirebaseApp.getApps().isEmpty()) {
+            if (serviceAccount != null) {
+                FirebaseOptions options;
+                try {
+                    options = optionBuilder.setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 FirebaseApp.initializeApp(options);
+                if (FirebaseApp.getApps().isEmpty()) {
+                    FirebaseApp.initializeApp(options);
+                }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        }
     }
 
 }
