@@ -19,6 +19,7 @@ public class OrderDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class OrderRequest {
 
         @NotNull
@@ -69,6 +70,7 @@ public class OrderDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class OrderInfoRequest {
 
         @NotNull(message = "우편번호 필수 입력입니다")
