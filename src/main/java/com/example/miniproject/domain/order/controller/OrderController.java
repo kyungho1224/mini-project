@@ -2,7 +2,6 @@ package com.example.miniproject.domain.order.controller;
 
 import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.order.dto.OrderDTO;
-import com.example.miniproject.domain.order.entity.Order;
 import com.example.miniproject.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
