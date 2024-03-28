@@ -41,6 +41,7 @@ public class SecurityConfig {
               request
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers("/api/members/join", "/api/members/login", "/api/members/verify").permitAll()
+                .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/hotels/**").permitAll()
                 .anyRequest().authenticated();
           })
