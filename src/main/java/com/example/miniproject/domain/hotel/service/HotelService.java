@@ -66,6 +66,7 @@ public class HotelService {
 
     public HotelDTO.Response findHotelById(Long hotelId) {
         Hotel hotel = getVisibleHotelOrThrow(hotelId);
+        hotelRepository.save(hotel);
         return HotelDTO.Response.of(hotel);
     }
 

@@ -5,10 +5,7 @@ import com.example.miniproject.common.entity.BaseEntity;
 import com.example.miniproject.domain.hotel.constant.RegisterStatus;
 import com.example.miniproject.domain.hotel.dto.NoticeDTO;
 import com.example.miniproject.domain.member.entity.Member;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +30,8 @@ public class Notice extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '게시글 내용'")
     private String message;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) NOT NULL COMMENT '게시글 상태'")
     private RegisterStatus registerStatus;
 
     public static Notice saveAs(Member member, Hotel hotel, NoticeDTO.Request request) {

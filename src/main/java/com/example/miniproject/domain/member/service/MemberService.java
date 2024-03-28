@@ -99,6 +99,7 @@ public class MemberService {
         } catch (IOException e) {
             throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION.getDescription());
         }
+        memberRepository.save(member);
     }
 
     @Transactional(readOnly = true)
@@ -115,6 +116,7 @@ public class MemberService {
         member.updateAdditionalInfo(
             request.getZipCode(), request.getNation(), request.getCity(), request.getAddress()
         );
+        memberRepository.save(member);
     }
 
     public void updateMember(Member member) {
