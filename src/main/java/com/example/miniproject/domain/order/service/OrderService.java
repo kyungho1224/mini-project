@@ -106,6 +106,12 @@ public class OrderService {
         }
 
         member.subtractCredit(order.getTotalPrice());
+        member.updateAdditionalInfo(
+            request.getZipCode(),
+            request.getNation(),
+            request.getCity(),
+            request.getAddress()
+        );
         memberService.updateMember(member);
 
         if (!order.getStatus().equals(OrderStatus.PAYMENT_PENDING)) {

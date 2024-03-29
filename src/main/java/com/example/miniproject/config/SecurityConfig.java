@@ -17,8 +17,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
+import java.util.List;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -38,42 +40,38 @@ public class SecurityConfig {
         return new JwtTokenFilter(jwtTokenUtil, memberRepository);
     }
 
-    @Bean
-    public CorsFilter corsFilter() {
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // CorsConfiguration 인스턴스 생성
-        CorsConfiguration config = new CorsConfiguration();
-
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-
-        source.registerCorsConfiguration("/**", config);
-
-        // CorsFilter 인스턴스 반환
-        return new CorsFilter(source);
+    CorsConfigurationSource corsConfigurationSource() {
+        return request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowedOriginPatterns(List.of(
+                "http://localhost:3000",
+                "https://fe-7-mini-team4.vercel.app",
+                "http://127.0.0.1:5500/"
+            ));
+            config.setAllowCredentials(true);
+            return config;
+        };
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-          .httpBasic(AbstractHttpConfigurer::disable)
-            .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
-            .and()
-          .csrf(AbstractHttpConfigurer::disable)
-          .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-          .authorizeHttpRequests(request -> {
-              request
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
+            .csrf(AbstractHttpConfigurer::disable)
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(request -> request
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers("/api/members/join", "/api/members/login", "/api/members/verify").permitAll()
-                .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**").permitAll()
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/hotels/**").permitAll()
-                .anyRequest().authenticated();
-          })
-          .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-          .formLogin(Customizer.withDefaults())
-          .logout(Customizer.withDefaults());
+                .anyRequest().authenticated())
+            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+            .formLogin(Customizer.withDefaults())
+            .logout(Customizer.withDefaults());
 
         return httpSecurity.build();
     }

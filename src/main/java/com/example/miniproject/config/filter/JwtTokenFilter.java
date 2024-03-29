@@ -74,7 +74,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        response.setHeader("Bearer ", accessToken);
+        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
     }
 
     private MemberDetails loadMemberByEmail(String email) {
