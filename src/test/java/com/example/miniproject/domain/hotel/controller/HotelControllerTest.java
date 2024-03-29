@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@DisplayName("오더 컨트롤러 테스트")
+@DisplayName("호텔 컨트롤러 테스트")
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @Transactional
