@@ -8,7 +8,6 @@ import com.example.miniproject.domain.hotel.service.HotelService;
 import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
 import com.example.miniproject.domain.member.entity.Member;
-import com.example.miniproject.domain.member.service.MemberService;
 import com.example.miniproject.exception.ApiErrorCode;
 import com.example.miniproject.exception.ApiException;
 import com.fasterxml.jackson.databind.ObjectMapper;

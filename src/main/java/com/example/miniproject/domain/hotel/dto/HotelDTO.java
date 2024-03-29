@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalTime;
 import java.util.List;
 
+
 public class HotelDTO {
 
     @AllArgsConstructor
