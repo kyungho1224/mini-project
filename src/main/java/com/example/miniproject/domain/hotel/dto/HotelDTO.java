@@ -14,11 +14,13 @@ import lombok.NoArgsConstructor;
 import java.time.LocalTime;
 import java.util.List;
 
+
 public class HotelDTO {
 
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class Request {
 
         @NotNull(message = "국가(지역)은 필수 입력입니다")
