@@ -78,7 +78,8 @@ public class HotelController {
       @RequestParam("nation") String nation,
       Pageable pageable) {
 
-        Nation nationStr = Nation.valueOf(nation.toUpperCase().replace("%", ""));
+        Nation nationStr = Nation.valueOf(nation.toUpperCase()
+          .replace("%", "").replace("\\b", ""));
 
         Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNameAndNationAndVisible(name, nationStr, pageable);
         return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
@@ -91,9 +92,12 @@ public class HotelController {
       @RequestParam("viewType") String viewType,
       Pageable pageable) {
 
-        Nation nationStr = Nation.valueOf(nation.toUpperCase().replace("%", ""));
-        RoomType roomTypeStr = RoomType.valueOf(roomType.toUpperCase().replace("%", ""));
-        ViewType viewTypeStr = ViewType.valueOf(viewType.toUpperCase().replace("%", ""));
+        Nation nationStr = Nation.valueOf(nation.toUpperCase()
+          .replace("%", "").replace("\\b", ""));
+        RoomType roomTypeStr = RoomType.valueOf(roomType.toUpperCase()
+          .replace("%", "").replace("\\b", ""));
+        ViewType viewTypeStr = ViewType.valueOf(viewType.toUpperCase()
+          .replace("%", "").replace("\\b", ""));
 
         Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNationAndTypeAndVisible(nationStr, roomTypeStr, viewTypeStr, pageable);
         return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
