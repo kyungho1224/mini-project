@@ -72,30 +72,30 @@ public class HotelController {
         return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
-    @GetMapping("/name/{name}/nation/{nation}")
+    @GetMapping("/")
     public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> searchHotelsByNameAndNation(
-      @PathVariable("name") String name,
-      @PathVariable("nation") String nationStr,
+      @RequestParam("name") String name,
+      @RequestParam("nation") String nation,
       Pageable pageable) {
 
-        Nation nation = Nation.valueOf(nationStr.toUpperCase().replace("%", ""));
+        Nation nationStr = Nation.valueOf(nation.toUpperCase().replace("%", ""));
 
-        Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNameAndNationAndVisible(name, nation, pageable);
+        Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNameAndNationAndVisible(name, nationStr, pageable);
         return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
-    @GetMapping("/{nation}/{roomType}/{viewType}")
-    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> 이름바꿔야함(
-      @PathVariable("nation") String nationStr,
-      @PathVariable("roomType") String roomTypeStr,
-      @PathVariable("viewType") String viewTypeStr,
+    @GetMapping("/search/")
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> searchHotelsByNationAndType(
+      @RequestParam("nation") String nation,
+      @RequestParam("roomType") String roomType,
+      @RequestParam("viewType") String viewType,
       Pageable pageable) {
 
-        Nation nation = Nation.valueOf(nationStr.toUpperCase().replace("%", ""));
-        RoomType roomType = RoomType.valueOf(roomTypeStr.toUpperCase().replace("%", ""));
-        ViewType viewType = ViewType.valueOf(viewTypeStr.toUpperCase().replace("%", ""));
+        Nation nationStr = Nation.valueOf(nation.toUpperCase().replace("%", ""));
+        RoomType roomTypeStr = RoomType.valueOf(roomType.toUpperCase().replace("%", ""));
+        ViewType viewTypeStr = ViewType.valueOf(viewType.toUpperCase().replace("%", ""));
 
-        Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNationAndTypeAndVisible(nation, roomType, viewType, pageable);
+        Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNationAndTypeAndVisible(nationStr, roomTypeStr, viewTypeStr, pageable);
         return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 
