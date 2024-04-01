@@ -34,7 +34,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @DisplayName("멤버 서비스 테스트")
-@ActiveProfiles("test")
+@ActiveProfiles("default")
 @Transactional
 @SpringBootTest
 class MemberServiceTest {
