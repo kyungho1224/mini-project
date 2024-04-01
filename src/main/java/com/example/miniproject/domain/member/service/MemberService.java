@@ -102,6 +102,7 @@ public class MemberService {
             throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION.getDescription());
         }
         memberRepository.save(member);
+        memberCacheRepository.setMember(member);
     }
 
     @Transactional(readOnly = true)
@@ -123,6 +124,7 @@ public class MemberService {
 
     public void updateMember(Member member) {
         memberRepository.save(member);
+        memberCacheRepository.setMember(member);
     }
 
     public Page<HotelDTO.Response> getMyFavoriteList(String email, Pageable pageable) {
