@@ -30,14 +30,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.verify;
 
 @DisplayName("오더 서비스 테스트")
-@ActiveProfiles("test")
+@ActiveProfiles("default")
 @Transactional
 @SpringBootTest
 class OrderServiceTest {
