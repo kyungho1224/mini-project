@@ -2,6 +2,8 @@ package com.example.miniproject.domain.hotel.controller;
 
 import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.hotel.constant.Nation;
+import com.example.miniproject.domain.hotel.constant.RoomType;
+import com.example.miniproject.domain.hotel.constant.ViewType;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.hotel.service.HotelService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -67,6 +69,33 @@ public class HotelController {
     public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> searchHotelsByName(
       @PathVariable String name, Pageable pageable) {
         Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNameAndVisible(name, pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
+    }
+
+    @GetMapping("/name/{name}/nation/{nation}")
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> searchHotelsByNameAndNation(
+      @PathVariable("name") String name,
+      @PathVariable("nation") String nationStr,
+      Pageable pageable) {
+
+        Nation nation = Nation.valueOf(nationStr.toUpperCase().replace("%", ""));
+
+        Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNameAndNationAndVisible(name, nation, pageable);
+        return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
+    }
+
+    @GetMapping("/{nation}/{roomType}/{viewType}")
+    public ResponseEntity<ApiResponse<Page<HotelDTO.Response>>> 이름바꿔야함(
+      @PathVariable("nation") String nationStr,
+      @PathVariable("roomType") String roomTypeStr,
+      @PathVariable("viewType") String viewTypeStr,
+      Pageable pageable) {
+
+        Nation nation = Nation.valueOf(nationStr.toUpperCase().replace("%", ""));
+        RoomType roomType = RoomType.valueOf(roomTypeStr.toUpperCase().replace("%", ""));
+        ViewType viewType = ViewType.valueOf(viewTypeStr.toUpperCase().replace("%", ""));
+
+        Page<HotelDTO.Response> hotelPage = hotelService.findHotelsByNationAndTypeAndVisible(nation, roomType, viewType, pageable);
         return ResponseEntity.status(OK).body(ApiResponse.ok(hotelPage));
     }
 

@@ -3,6 +3,8 @@ package com.example.miniproject.domain.hotel.service;
 import com.example.miniproject.common.service.ImageService;
 import com.example.miniproject.domain.hotel.constant.Nation;
 import com.example.miniproject.domain.hotel.constant.RegisterStatus;
+import com.example.miniproject.domain.hotel.constant.RoomType;
+import com.example.miniproject.domain.hotel.constant.ViewType;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.hotel.entity.Favorite;
 import com.example.miniproject.domain.hotel.entity.Hotel;
@@ -60,6 +62,18 @@ public class HotelService {
 
     public Page<HotelDTO.Response> findHotelsByNameAndVisible(String name, Pageable pageable) {
         Page<Hotel> hotels = hotelRepository.findByNameContainingAndRegisterStatus(name, RegisterStatus.VISIBLE, pageable);
+        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
+        return responsePage;
+    }
+
+    public Page<HotelDTO.Response> findHotelsByNameAndNationAndVisible(String name, Nation nation, Pageable pageable) {
+        Page<Hotel> hotels = hotelRepository.findByNameAndNationContainingAndRegisterStatus(name, nation, RegisterStatus.VISIBLE, pageable);
+        Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
+        return responsePage;
+    }
+
+    public Page<HotelDTO.Response> findHotelsByNationAndTypeAndVisible(Nation nation, RoomType roomType, ViewType viewType, Pageable pageable) {
+        Page<Hotel> hotels = hotelRepository.findByNationAndRoomTypeAndViewTypeAndRegisterStatus(nation, roomType, viewType, RegisterStatus.VISIBLE, pageable);
         Page<HotelDTO.Response> responsePage = hotels.map(HotelDTO.Response::of);
         return responsePage;
     }
