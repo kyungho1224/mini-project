@@ -51,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("멤버 컨트롤러 테스트")
-@ActiveProfiles("test")
+@ActiveProfiles("default")
 @AutoConfigureMockMvc
 @Transactional
 @SpringBootTest

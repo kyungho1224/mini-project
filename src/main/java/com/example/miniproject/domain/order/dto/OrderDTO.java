@@ -13,12 +13,14 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class OrderDTO {
 
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class OrderRequest {
 
         @NotNull
@@ -51,6 +53,7 @@ public class OrderDTO {
         private int adultCount;
         private int childCount;
         private BigDecimal totalPrice;
+        private LocalDateTime createdAt;
 
         public static OrderResponse of(Order order) {
             return OrderResponse.builder()
@@ -62,6 +65,7 @@ public class OrderDTO {
               .adultCount(order.getAdultCount())
               .childCount(order.getChildCount())
               .totalPrice(order.getTotalPrice())
+              .createdAt(order.getCreatedAt())
               .build();
         }
     }
@@ -69,6 +73,7 @@ public class OrderDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     @Getter
+    @Builder
     public static class OrderInfoRequest {
 
         @NotNull(message = "우편번호 필수 입력입니다")
@@ -106,6 +111,7 @@ public class OrderDTO {
         private String nation;
         private String zipCode;
         private String comment;
+        private LocalDateTime createdAt;
 
         public static OrderInfoResponse of(Order order) {
             return OrderInfoResponse.builder()
@@ -123,6 +129,7 @@ public class OrderDTO {
               .nation(order.getNation())
               .zipCode(order.getZipCode())
               .comment(order.getComment())
+              .createdAt(order.getCreatedAt())
               .build();
         }
     }
@@ -147,6 +154,7 @@ public class OrderDTO {
         private String nation;
         private String zipCode;
         private String comment;
+        private LocalDateTime createdAt;
 
         public static OrderDetailResponse of(Order order) {
             return OrderDetailResponse.builder()
@@ -165,6 +173,7 @@ public class OrderDTO {
               .city(order.getCity())
               .address(order.getAddress())
               .comment(order.getComment())
+              .createdAt(order.getCreatedAt())
               .build();
         }
     }

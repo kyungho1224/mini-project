@@ -1,4 +1,4 @@
-name: Java+SpringBoot CI/CD with Gradle
+name: MiniProject CD
 
 on:
   push:
@@ -16,8 +16,7 @@ env:
   AWS_CODE_DEPLOY_APPLICATION: mini-project
   AWS_CODE_DEPLOY_GROUP: mini-project
 
-permissions:
-  contents: read
+permissions: write-all
 
 jobs:
   build:
@@ -45,8 +44,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-#        run: ./gradlew clean --stacktrace --info build -x test
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean bootJar -x test
         shell: bash
 
       - name: Make Directory

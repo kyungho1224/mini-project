@@ -2,7 +2,6 @@ package com.example.miniproject.domain.order.controller;
 
 import com.example.miniproject.common.dto.ApiResponse;
 import com.example.miniproject.domain.order.dto.OrderDTO;
-import com.example.miniproject.domain.order.entity.Order;
 import com.example.miniproject.domain.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,13 +19,22 @@ public class OrderController {
 
     private final OrderService orderService;
 
+//    @PostMapping
+//    public ResponseEntity<ApiResponse<OrderDTO.OrderResponse>> createOrder(
+//      Authentication authentication,
+//      @RequestBody OrderDTO.OrderRequest orderRequest
+//    ) {
+//        Order order = orderService.createOrder(authentication.getName(), orderRequest);
+//        OrderDTO.OrderResponse orderResponse = OrderDTO.OrderResponse.of(order);
+//        return ResponseEntity.status(CREATED).body(ApiResponse.ok(orderResponse));
+//    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<OrderDTO.OrderResponse>> createOrder(
-      Authentication authentication,
-      @RequestBody OrderDTO.OrderRequest orderRequest
+            Authentication authentication,
+            @RequestBody OrderDTO.OrderRequest orderRequest
     ) {
-        Order order = orderService.createOrder(authentication.getName(), orderRequest);
-        OrderDTO.OrderResponse orderResponse = OrderDTO.OrderResponse.of(order);
+        OrderDTO.OrderResponse orderResponse = orderService.createOrder(authentication.getName(), orderRequest);
         return ResponseEntity.status(CREATED).body(ApiResponse.ok(orderResponse));
     }
 

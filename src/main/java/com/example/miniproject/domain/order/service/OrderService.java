@@ -27,7 +27,38 @@ public class OrderService {
     private final RoomService roomService;
     private final OrderRepository orderRepository;
 
-    public Order createOrder(String email, OrderDTO.OrderRequest request) {
+//    public Order createOrder(String email, OrderDTO.OrderRequest request) {
+//        Member member = memberService.getValidMemberOrThrow(email);
+//        Room room = roomService.getVisibleAndActiveRoomOrThrow(request.getRoomId());
+//
+//        if (request.getAdultCount() + request.getChildCount() > room.getMaximumCapacity() - room.getStandardCapacity()) {
+//            throw new ApiException(ApiErrorCode.EXCEEDS_MAXIMUM_CAPACITY.getDescription());
+//        }
+//
+//        BigDecimal totalPrice = room.getStandardPrice()
+//          .add(room.getAdultFare().multiply(BigDecimal.valueOf(request.getAdultCount())))
+//          .add(room.getChildFare().multiply(BigDecimal.valueOf(request.getChildCount())));
+//
+//        if (room.getDiscountRate() != null) {
+//            totalPrice = totalPrice.multiply(BigDecimal.ONE.subtract(room.getDiscountRate()));
+//        }
+//
+//        Order order = Order.saveAs(
+//          member,
+//          room,
+//          request.getCheckIn(),
+//          request.getCheckOut(),
+//          request.getAdultCount(),
+//          request.getChildCount(),
+//          totalPrice
+//        );
+//
+//        order.updateStatus(OrderStatus.PAYMENT_PENDING);
+//
+//        return orderRepository.save(order);
+//    }
+
+    public OrderDTO.OrderResponse createOrder(String email, OrderDTO.OrderRequest request) {
         Member member = memberService.getValidMemberOrThrow(email);
         Room room = roomService.getVisibleAndActiveRoomOrThrow(request.getRoomId());
 
@@ -36,26 +67,26 @@ public class OrderService {
         }
 
         BigDecimal totalPrice = room.getStandardPrice()
-          .add(room.getAdultFare().multiply(BigDecimal.valueOf(request.getAdultCount())))
-          .add(room.getChildFare().multiply(BigDecimal.valueOf(request.getChildCount())));
+                .add(room.getAdultFare().multiply(BigDecimal.valueOf(request.getAdultCount())))
+                .add(room.getChildFare().multiply(BigDecimal.valueOf(request.getChildCount())));
 
         if (room.getDiscountRate() != null) {
             totalPrice = totalPrice.multiply(BigDecimal.ONE.subtract(room.getDiscountRate()));
         }
 
         Order order = Order.saveAs(
-          member,
-          room,
-          request.getCheckIn(),
-          request.getCheckOut(),
-          request.getAdultCount(),
-          request.getChildCount(),
-          totalPrice
+                member,
+                room,
+                request.getCheckIn(),
+                request.getCheckOut(),
+                request.getAdultCount(),
+                request.getChildCount(),
+                totalPrice
         );
 
         order.updateStatus(OrderStatus.PAYMENT_PENDING);
 
-        return orderRepository.save(order);
+        return OrderDTO.OrderResponse.of(orderRepository.save(order));
     }
 
     public void updateOrderInfo(
@@ -75,6 +106,12 @@ public class OrderService {
         }
 
         member.subtractCredit(order.getTotalPrice());
+        member.updateAdditionalInfo(
+            request.getZipCode(),
+            request.getNation(),
+            request.getCity(),
+            request.getAddress()
+        );
         memberService.updateMember(member);
 
         if (!order.getStatus().equals(OrderStatus.PAYMENT_PENDING)) {
