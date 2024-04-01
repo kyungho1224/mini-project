@@ -49,6 +49,9 @@ dependencies {
 	//Swagger
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.1.0'
 
+	// 슬랙 웹훅
+	implementation 'net.gpedro.integrations.slack:slack-webhook:1.4.0'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
