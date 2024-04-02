@@ -36,10 +36,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -91,6 +90,7 @@ class HotelServiceTest {
           .tv(true)
           .safetyDepositBox(true)
           .build();
+
         member = Member.builder()
           .email("master@example.com")
           .password("password")
@@ -115,6 +115,7 @@ class HotelServiceTest {
           .basicOptions(basicOptions)
           .activeStatus(ActiveStatus.ACTIVE)
           .registerStatus(RegisterStatus.VISIBLE)
+          .rooms(null)
           .build();
 
         request = HotelDTO.Request.builder()
@@ -199,7 +200,7 @@ class HotelServiceTest {
         given(hotel.getName()).willReturn("오크우드 호텔");
 
         given(hotelRepository.findByIdAndRegisterStatus(eq(1L), eq(RegisterStatus.VISIBLE)))
-          .willReturn(java.util.Optional.of(hotel));
+          .willReturn(Optional.of(hotel));
 
         HotelDTO.Response response = hotelService.findHotelById(1L);
 
@@ -208,6 +209,59 @@ class HotelServiceTest {
 
         verify(hotelRepository, times(1))
           .findByIdAndRegisterStatus(eq(1L), eq(RegisterStatus.VISIBLE));
+
+    }
+
+    @Test
+    @WithMockUser
+    public void 전체_상품_호텔_이름_국가_조회_성공() {
+
+        String name = "hotel";
+        Nation nation = Nation.PHILIPPINES;
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Hotel> mockHotelPage = new PageImpl<>(Collections.singletonList(hotel));
+        given(hotelRepository.findByNameAndNationContainingAndRegisterStatus(
+          any(String.class), any(Nation.class), any(RegisterStatus.class), any(Pageable.class)))
+          .willReturn(mockHotelPage);
+
+        Page<HotelDTO.Response> response = hotelService.findHotelsByNameAndNationAndVisible(
+          name, nation, pageable);
+
+        assertThat(response.getContent()).hasSize(1);
+        assertThat(response.getContent().get(0).getName())
+          .isEqualTo(hotel.getName());
+        assertThat(response.getContent().get(0).getNation())
+          .isEqualTo(hotel.getNation());
+
+        verify(hotelRepository).findByNameAndNationContainingAndRegisterStatus(
+          name, nation, RegisterStatus.VISIBLE, pageable);
+
+    }
+
+    @Test
+    @WithMockUser
+    public void 전체_상품_호텔_이름_국가_룸타입_뷰타입_조회_성공() {
+
+        Nation nation = Nation.PHILIPPINES;
+        RoomType roomType = RoomType.TWIN;
+        ViewType viewType = ViewType.OCEAN;
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<Hotel> mockHotelList = new ArrayList<>();
+        Hotel mockHotel = new Hotel();
+        mockHotelList.add(mockHotel);
+
+        Page<Hotel> mockPage = new PageImpl<>(mockHotelList);
+        given(hotelRepository.findByNationAndRoomTypeAndViewTypeAndRegisterStatus(
+          any(Nation.class), any(RoomType.class), any(ViewType.class),
+          any(RegisterStatus.class), any(Pageable.class)))
+          .willReturn(mockPage);
+
+        Page<HotelDTO.Response> response = hotelService.findHotelsByNationAndTypeAndVisible(
+          nation, roomType, viewType, pageable);
+
+        assertEquals(1, response.getContent().size());
 
     }
 
@@ -548,7 +602,7 @@ class HotelServiceTest {
         when(memberService.getValidMemberOrThrow(member.getEmail())).thenReturn(member);
 
         when(hotelRepository.findByIdAndRegisterStatus(hotel.getId(), RegisterStatus.VISIBLE))
-          .thenReturn(java.util.Optional.of(hotel));
+          .thenReturn(Optional.of(hotel));
 
         hotelService.unregister(member.getEmail(), hotel.getId());
 
