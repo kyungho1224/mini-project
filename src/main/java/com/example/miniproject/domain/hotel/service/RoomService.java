@@ -13,6 +13,7 @@ import com.example.miniproject.domain.member.service.MemberService;
 import com.example.miniproject.exception.ApiErrorCode;
 import com.example.miniproject.exception.ApiException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -45,6 +47,7 @@ public class RoomService {
     public void create(String email, Long hotelId, RoomDTO.Request request, MultipartFile[] files) {
         Room room = create(email, hotelId, request);
         uploadThumbnail(email, hotelId, room.getId(), files);
+        roomRepository.save(room);
     }
 
     public void uploadThumbnail(String email, Long hotelId, Long roomId, MultipartFile[] files) {
