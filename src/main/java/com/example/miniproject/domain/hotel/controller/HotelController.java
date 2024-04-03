@@ -30,7 +30,7 @@ public class HotelController {
     private final ObjectMapper objectMapper;
 
     @PostMapping
-    public ResponseEntity<Void> register(
+    public ResponseEntity<ApiResponse<HotelDTO.SimpleResponse>> register(
       Authentication authentication,
       @Validated
       @RequestParam(name = "request") String json,
@@ -43,12 +43,13 @@ public class HotelController {
             throw new RuntimeException(e);
         }
 
+        HotelDTO.SimpleResponse response;
         if (files != null && files.length > 0) {
-            hotelService.create(authentication.getName(), request, files);
+            response = hotelService.create(authentication.getName(), request, files);
         } else {
-            hotelService.create(authentication.getName(), request);
+            response = hotelService.create(authentication.getName(), request);
         }
-        return ResponseEntity.status(CREATED).build();
+        return ResponseEntity.status(CREATED).body(ApiResponse.ok(response));
     }
 
     @GetMapping

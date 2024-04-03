@@ -37,15 +37,17 @@ public class HotelService {
     private final ImageService imageService;
     private final FavoriteRepository favoriteRepository;
 
-    public void create(String email, HotelDTO.Request request) {
+    public HotelDTO.SimpleResponse create(String email, HotelDTO.Request request) {
         memberService.getMasterMemberOrThrow(email);
-        hotelRepository.save(Hotel.saveAs(request));
+        Hotel savedHotel = hotelRepository.save(Hotel.saveAs(request));
+        return HotelDTO.SimpleResponse.of(savedHotel);
     }
 
-    public void create(String email, HotelDTO.Request request, MultipartFile[] files) {
+    public HotelDTO.SimpleResponse create(String email, HotelDTO.Request request, MultipartFile[] files) {
         memberService.getMasterMemberOrThrow(email);
         Hotel savedHotel = hotelRepository.save(Hotel.saveAs(request));
         uploadThumbnail(email, savedHotel.getId(), files);
+        return HotelDTO.SimpleResponse.of(savedHotel);
     }
 
     public Page<HotelDTO.Response> findAllVisibleHotels(Pageable pageable) {
@@ -96,7 +98,7 @@ public class HotelService {
         hotel.updateData(request);
     }
 
-    public void uploadThumbnail(String email, Long hotelId, MultipartFile[] files) {
+    public Hotel uploadThumbnail(String email, Long hotelId, MultipartFile[] files) {
         memberService.getMasterMemberOrThrow(email);
         Hotel hotel = getVisibleHotelOrThrow(hotelId);
         for (MultipartFile file : files) {
@@ -104,16 +106,18 @@ public class HotelService {
                 String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
                 HotelThumbnail thumbnail = hotelThumbnailRepository.save(HotelThumbnail.saveAs(hotel, imgUrl));
                 hotel.addThumbnail(thumbnail);
+                hotelRepository.save(hotel);
             } catch (IOException e) {
                 throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION.getDescription());
             }
         }
+        return hotel;
     }
 
-    public void updateThumbnail(String email, Long hotelId, Long thumbnailId, MultipartFile file) {
+    public Hotel updateThumbnail(String email, Long hotelId, Long thumbnailId, MultipartFile file) {
         memberService.getMasterMemberOrThrow(email);
-        getVisibleHotelOrThrow(hotelId);
-        hotelThumbnailRepository.findById(thumbnailId)
+        Hotel hotel = getVisibleHotelOrThrow(hotelId);
+        HotelThumbnail hotelThumbnail = hotelThumbnailRepository.findById(thumbnailId)
           .map(thumbnail -> {
               try {
                   String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
@@ -124,6 +128,9 @@ public class HotelService {
               return thumbnail;
           })
           .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_IMAGE.getDescription()));
+        hotelThumbnailRepository.save(hotelThumbnail);
+        hotelRepository.save(hotel);
+        return hotel;
     }
 
     public void toggleFavorite(String email, Long hotelId) {
