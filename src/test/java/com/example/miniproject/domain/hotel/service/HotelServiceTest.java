@@ -269,6 +269,9 @@ class HotelServiceTest {
     @WithMockUser
     public void 마스터_호텔_등록_데이터_성공() {
 
+        Hotel hotel = mock(Hotel.class);
+        given(hotelRepository.save(any(Hotel.class))).willReturn(hotel);
+
         hotelService.create(member.getEmail(), request);
 
         verify(memberService).getMasterMemberOrThrow(member.getEmail());
@@ -319,7 +322,7 @@ class HotelServiceTest {
         hotelService.create(member.getEmail(), request, files);
 
         verify(memberService, times(2)).getMasterMemberOrThrow(member.getEmail());
-        verify(hotelRepository, times(1)).save(any(Hotel.class));
+        verify(hotelRepository, times(3)).save(any(Hotel.class));
         verify(imageService, times(files.length)).upload(any(MultipartFile.class), anyString());
         verify(hotelThumbnailRepository, times(files.length)).save(any(HotelThumbnail.class));
 
