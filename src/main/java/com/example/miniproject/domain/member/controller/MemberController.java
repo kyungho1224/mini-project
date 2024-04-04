@@ -25,6 +25,11 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "안녕 도커~";
+    }
+
     @PostMapping("/join")
     public ResponseEntity<ApiResponse<MemberDTO.JoinResponse>> join(
         @Validated
