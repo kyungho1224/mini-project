@@ -37,11 +37,6 @@ public class HotelController {
     private final HotelService hotelService;
     private final ObjectMapper objectMapper;
 
-    @GetMapping("/welcome")
-    public String welcome() {
-        return "안녕 도커~";
-    }
-
     @PostMapping
     public ResponseEntity<ApiResponse<HotelDTO.Response>> register(
       Authentication authentication,

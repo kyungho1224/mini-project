@@ -20,22 +20,22 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-#      - name: Copy serviceAccountKey.json
-#        run: echo "${{ secrets.FIREBASE_ACCOUNT_KEY }}" > ./src/main/resources/serviceAccountKey.json
-#        shell: bash
+      - name: Copy serviceAccountKey.json
+        run: echo "${{ secrets.FIREBASE_ACCOUNT_KEY }}" > ./src/main/resources/serviceAccountKey.json
+        shell: bash
 
       - name: Copy application.yml
         run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
         shell: bash
 
       ## create firebase-key.json
-      - name: create firebase key
-        run: |
-          cd ./src/main/resources
-          ls -a .
-          touch ./serviceAccountKey.json
-          echo "${{ secrets.FIREBASE_ACCOUNT_KEY }}" > ./serviceAccountKey.json
-        shell: bash
+#      - name: create firebase key
+#        run: |
+#          cd ./src/main/resources
+#          ls -a .
+#          touch ./serviceAccountKey.json
+#          echo "${{ secrets.FIREBASE_ACCOUNT_KEY }}" > ./serviceAccountKey.json
+#        shell: bash
 
       - name: Add permission
         run: chmod +x gradlew
@@ -66,8 +66,8 @@ jobs:
           COMPOSE: "/home/ubuntu/compose/docker-compose.yml"
         with:
           username: ubuntu
-          host: ${{ secrets.EC2_DOCKER_HOST }}
-          key: ${{ secrets.EC2_DOCKER_PRIVATE_KEY }}
+          host: ${{ secrets.EC2_MINI_HOST }}
+          key: ${{ secrets.EC2_MINI_PRIVATE_KEY }}
           envs: APP, COMPOSE
           script_stop: true
           script: |
