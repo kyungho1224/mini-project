@@ -28,6 +28,15 @@ jobs:
         run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
         shell: bash
 
+      ## create firebase-key.json
+      - name: create firebase key
+        run: |
+          cd ./src/main/resources
+          ls -a .
+          touch ./serviceAccountKey.json
+          echo "${{ secrets.FIREBASE_ACCOUNT_KEY }}" > ./serviceAccountKey.json
+        shell: bash
+
       - name: Add permission
         run: chmod +x gradlew
 
