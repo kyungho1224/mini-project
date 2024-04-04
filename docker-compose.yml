@@ -4,6 +4,6 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./serviceAccountKey.json:/app/src/main/resources/serviceAccountKey.json
+      - /home/ubuntu/compose/serviceAccountKey.json:/app/src/main/resources/serviceAccountKey.json
     container_name: mini-project
     image: be7kimkyungho/mini-project:latest
