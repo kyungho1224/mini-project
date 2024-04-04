@@ -20,12 +20,9 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: Make serviceAccountKey.json
-        run: touch ./src/main/resources/serviceAccountKey.json
-
-      - name: Copy serviceAccountKey.json
-        run: echo "${{ secrets.FIREBASE_ACCOUNT_KEY }}" > ./src/main/resources/serviceAccountKey.json
-        shell: bash
+#      - name: Copy serviceAccountKey.json
+#        run: echo "${{ secrets.FIREBASE_ACCOUNT_KEY }}" > ./src/main/resources/serviceAccountKey.json
+#        shell: bash
 
       - name: Copy application.yml
         run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
