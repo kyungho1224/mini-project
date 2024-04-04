@@ -13,6 +13,7 @@ import com.example.miniproject.domain.member.service.MemberService;
 import com.example.miniproject.exception.ApiErrorCode;
 import com.example.miniproject.exception.ApiException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -42,13 +44,31 @@ public class RoomService {
         return savedRoom;
     }
 
-    public void create(String email, Long hotelId, RoomDTO.Request request, MultipartFile[] files) {
+    public Room create(String email, Long hotelId, RoomDTO.Request request, MultipartFile[] files) {
         Room room = create(email, hotelId, request);
-        uploadThumbnail(email, hotelId, room.getId(), files);
+        uploadThumbnail(hotelId, room.getId(), files);
+        return roomRepository.save(room);
     }
 
-    public void uploadThumbnail(String email, Long hotelId, Long roomId, MultipartFile[] files) {
+    public Room update(String email, Long hotelId, Long roomId, RoomDTO.Request request) {
         memberService.getMasterMemberOrThrow(email);
+        hotelService.getVisibleHotelOrThrow(hotelId);
+        Room room = getVisibleRoomOrThrow(roomId);
+        room.updateData(request);
+
+        return roomRepository.save(room);
+    }
+
+    public Room update(String email, Long hotelId, Long roomId, RoomDTO.Request request, MultipartFile[] files) {
+        Room room = update(email, hotelId, roomId, request);
+        room.removeAllThumbnail();
+        uploadThumbnail(hotelId, room.getId(), files);
+        room.updateData(request);
+        return roomRepository.save(room);
+    }
+
+    public void uploadThumbnail(Long hotelId, Long roomId, MultipartFile[] files) {
+//        memberService.getMasterMemberOrThrow(email);
         hotelService.getVisibleHotelOrThrow(hotelId);
 
         Room room = getVisibleRoomOrThrow(roomId);
@@ -68,30 +88,6 @@ public class RoomService {
         hotelService.getVisibleHotelOrThrow(hotelId);
         Room room = getVisibleRoomOrThrow(roomId);
         room.delete();
-    }
-
-    public void updateData(String email, Long hotelId, Long roomId, RoomDTO.Request request) {
-        memberService.getMasterMemberOrThrow(email);
-        hotelService.getVisibleHotelOrThrow(hotelId);
-        Room room = getVisibleRoomOrThrow(roomId);
-        room.updateData(request);
-    }
-
-    public void updateThumbnail(String email, Long hotelId, Long roomId, Long thumbnailId, MultipartFile file) {
-        memberService.getMasterMemberOrThrow(email);
-        hotelService.getVisibleHotelOrThrow(hotelId);
-        checkVisibleRoomOrThrow(roomId);
-        roomThumbnailRepository.findById(thumbnailId)
-          .map(thumbnail -> {
-              try {
-                  String imgUrl = imageService.upload(file, UUID.randomUUID().toString());
-                  thumbnail.updateThumbnail(imgUrl);
-              } catch (IOException e) {
-                  throw new ApiException(ApiErrorCode.FIREBASE_EXCEPTION.getDescription());
-              }
-              return thumbnail;
-          })
-          .orElseThrow(() -> new ApiException(ApiErrorCode.NOT_FOUND_IMAGE.getDescription()));
     }
 
     public Room getVisibleRoomOrThrow(Long roomId) {

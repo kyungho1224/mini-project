@@ -123,12 +123,15 @@ public class RoomDTO {
 
         private ViewType viewType;
 
+        private List<ThumbnailDTO.RoomThumbnailsResponse> thumbnails;
+
         public static SimpleResponse of(Room room) {
             return SimpleResponse.builder()
               .id(room.getId())
               .type(room.getType())
               .bedType(room.getBedType())
               .viewType(room.getViewType())
+              .thumbnails(ThumbnailDTO.RoomThumbnailsResponse.of(room.getThumbnails()))
               .build();
         }
 
