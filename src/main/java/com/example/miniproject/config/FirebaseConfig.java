@@ -6,29 +6,39 @@ import com.google.firebase.FirebaseOptions;
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.FileInputStream;
 
 @Configuration
 public class FirebaseConfig {
 
     @PostConstruct
     public void init() {
-            InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
+//            InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
+//            FirebaseOptions.Builder optionBuilder = FirebaseOptions.builder();
+//            if (serviceAccount != null) {
+//                FirebaseOptions options;
+//                try {
+//                    options = optionBuilder.setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                FirebaseApp.initializeApp(options);
+//                if (FirebaseApp.getApps().isEmpty()) {
+//                    FirebaseApp.initializeApp(options);
+//                }
+//            }
+        try {
+            FileInputStream fis = new FileInputStream("src/main/resources/serviceAccountKey.json");
             FirebaseOptions.Builder optionBuilder = FirebaseOptions.builder();
-            if (serviceAccount != null) {
-                FirebaseOptions options;
-                try {
-                    options = optionBuilder.setCredentials(GoogleCredentials.fromStream(serviceAccount)).build();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            FirebaseOptions options = optionBuilder.setCredentials(GoogleCredentials.fromStream(fis)).build();
+            FirebaseApp.initializeApp(options);
+            if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
-                if (FirebaseApp.getApps().isEmpty()) {
-                    FirebaseApp.initializeApp(options);
-                }
             }
-//        }
+        } catch (Exception e) {
+            String message = String.format("Firebase Config error : %s", e.getMessage());
+            throw new RuntimeException(message);
+        }
     }
 
 }
