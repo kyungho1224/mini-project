@@ -62,13 +62,25 @@ public class OrderService {
         Member member = memberService.getValidMemberOrThrow(email);
         Room room = roomService.getVisibleAndActiveRoomOrThrow(request.getRoomId());
 
-        if (request.getAdultCount() + request.getChildCount() > room.getMaximumCapacity() - room.getStandardCapacity()) {
+        if (request.getAdultCount() + request.getChildCount() - room.getStandardCapacity()
+          > room.getMaximumCapacity() - room.getStandardCapacity()) {
             throw new ApiException(ApiErrorCode.EXCEEDS_MAXIMUM_CAPACITY.getDescription());
         }
 
-        BigDecimal totalPrice = room.getStandardPrice()
-                .add(room.getAdultFare().multiply(BigDecimal.valueOf(request.getAdultCount())))
-                .add(room.getChildFare().multiply(BigDecimal.valueOf(request.getChildCount())));
+        BigDecimal totalPrice;
+        int overAdultCount;
+        int overChildCount;
+        int overCount = request.getAdultCount() + request.getChildCount() - room.getStandardCapacity();
+
+        if (overCount > 0) {
+            overAdultCount = request.getAdultCount() - room.getStandardCapacity();
+            overChildCount = Math.max(overCount - overAdultCount, 0);
+            totalPrice = room.getStandardPrice()
+              .add(room.getAdultFare().multiply(BigDecimal.valueOf(overAdultCount)))
+              .add(room.getChildFare().multiply(BigDecimal.valueOf(overChildCount)));
+        } else {
+            totalPrice = room.getStandardPrice();
+        }
 
         if (room.getDiscountRate() != null) {
             totalPrice = totalPrice.multiply(BigDecimal.ONE.subtract(room.getDiscountRate()));
