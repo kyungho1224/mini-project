@@ -4,6 +4,7 @@ import com.example.miniproject.domain.hotel.constant.*;
 import com.example.miniproject.domain.hotel.dto.BasicOptions;
 import com.example.miniproject.domain.hotel.dto.HotelDTO;
 import com.example.miniproject.domain.hotel.dto.RoomDTO;
+import com.example.miniproject.domain.hotel.dto.SearchRequest;
 import com.example.miniproject.domain.hotel.entity.Hotel;
 import com.example.miniproject.domain.hotel.service.HotelService;
 import com.example.miniproject.domain.member.constant.MemberRole;
@@ -16,6 +17,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -64,6 +68,7 @@ class HotelControllerTest {
     private HotelService hotelService;
 
     private Member member;
+    private Hotel hotel;
     private List<HotelDTO.Response> list;
     private List<RoomDTO.Response> rooms;
     private HotelDTO.Request request;
@@ -98,7 +103,7 @@ class HotelControllerTest {
           .uuid("uuid")
           .build();
 
-        Hotel hotel = Hotel.builder()
+        hotel = Hotel.builder()
           .nation(Nation.PHILIPPINES)
           .name("hotelName")
           .description("description")
@@ -160,21 +165,24 @@ class HotelControllerTest {
     @WithMockUser
     public void 전체_상품_조회_성공() throws Exception {
 
+        SearchRequest searchRequest = new SearchRequest(SearchType.ALL_ANONYMOUS);
+        searchRequest.setPageable(PageRequest.of(0, 20));
+
         Pageable pageable = PageRequest.of(0, 1);
         Page<HotelDTO.Response> responsePage = new PageImpl<>(list, pageable, list.size());
 
-        given(hotelService.findAllVisibleHotels(any(Pageable.class)))
+        given(hotelService.searchCollection(any(SearchRequest.class)))
           .willReturn(responsePage);
 
         mockMvc.perform(get("/api/hotels")
-            .param("page", "0")
-            .param("size", "10")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .contentType(MediaType.APPLICATION_JSON))
           .andDo(print())
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.result.content").isArray())
-          .andExpect(jsonPath("$.result.content[0].name", is("hotelName")));
+          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.result.content[0].id").value(1L));
+
+        ArgumentCaptor<SearchRequest> searchRequestCaptor = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(hotelService).searchCollection(searchRequestCaptor.capture());
 
     }
 
@@ -182,21 +190,30 @@ class HotelControllerTest {
     @WithMockUser
     public void 전체_상품_카테고리_조회_성공() throws Exception {
 
+        String nation = "PHILIPPINES";
+        SearchRequest searchRequest = new SearchRequest(SearchType.NATION_ANONYMOUS);
+        searchRequest.setNation(Nation.valueOf(nation));
+        searchRequest.setPageable(PageRequest.of(0, 20));
+
         Pageable pageable = PageRequest.of(0, 1);
         Page<HotelDTO.Response> responsePage = new PageImpl<>(list, pageable, list.size());
 
-        given(hotelService.findByNation(any(), any(Pageable.class)))
+        given(hotelService.searchCollection(any(SearchRequest.class)))
           .willReturn(responsePage);
 
-        mockMvc.perform(get("/api/hotels/nation/{nation}", request.getNation())
-            .param("page", "0")
-            .param("size", "10")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(get("/api/hotels/nation/{nation}", nation)
+            .contentType(MediaType.APPLICATION_JSON))
           .andDo(print())
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.result.content").isArray())
-          .andExpect(jsonPath("$.result.content[0].nation", is("PHILIPPINES")));
+          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.result.content[0].id").value(1L))
+          .andExpect(jsonPath("$.result.content[0].nation").value(nation));
+
+        ArgumentCaptor<SearchRequest> searchRequestCaptor = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(hotelService).searchCollection(searchRequestCaptor.capture());
+
+        SearchRequest capturedRequest = searchRequestCaptor.getValue();
+        assertEquals(Nation.valueOf(nation), capturedRequest.getNation());
 
     }
 
@@ -204,30 +221,40 @@ class HotelControllerTest {
     @WithMockUser
     public void 전체_상품_검색어_호텔명_조회_성공() throws Exception {
 
+        String name = "hotel";
+        SearchRequest searchRequest = new SearchRequest(SearchType.NAME_ANONYMOUS);
+        searchRequest.setName(name);
+        searchRequest.setPageable(PageRequest.of(0, 20));
+
         Pageable pageable = PageRequest.of(0, 1);
         Page<HotelDTO.Response> responsePage = new PageImpl<>(list, pageable, list.size());
 
-        given(hotelService.findHotelsByNameAndVisible(anyString(), any(Pageable.class))).willReturn(responsePage);
+        given(hotelService.searchCollection(any(SearchRequest.class)))
+          .willReturn(responsePage);
 
-        mockMvc.perform(get("/api/hotels/name/{name}", request.getName())
-            .param("page", "0")
-            .param("size", "10")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(get("/api/hotels/name/{name}", name)
+            .contentType(MediaType.APPLICATION_JSON))
           .andDo(print())
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.result.content").isArray())
-          .andExpect(jsonPath("$.result.content[0].name", is("hotelName")));
+          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.result.content[0].id").value(1L))
+          .andExpect(jsonPath("$.result.content[0].name").value("hotelName"));
+
+        ArgumentCaptor<SearchRequest> searchRequestCaptor = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(hotelService).searchCollection(searchRequestCaptor.capture());
+
+        SearchRequest capturedRequest = searchRequestCaptor.getValue();
+        assertEquals(name, capturedRequest.getName());
 
     }
 
     @Test
-    @WithMockUser
-    public void 전체_상품_호텔_개별상품_조회_성공() throws Exception {
+    @WithAnonymousUser
+    public void 전체_상품_호텔_개별상품_조회_로그인x_성공() throws Exception {
 
         Long hotelId = 1L;
         HotelDTO.Response response = HotelDTO.Response.builder()
-          .id(1L)
+          .id(hotelId)
           .nation(request.getNation())
           .name(request.getName())
           .description(request.getDescription())
@@ -250,11 +277,49 @@ class HotelControllerTest {
           .willReturn(response);
 
         mockMvc.perform(get("/api/hotels/{hotelId}", hotelId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
+            .contentType(MediaType.APPLICATION_JSON))
           .andDo(print())
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.result.name", is("hotelName")));
+          .andExpect(jsonPath("$.result.id").value(hotelId));
+
+    }
+
+    @Test
+    @WithMockUser(username = "user@example.com")
+    public void 전체_상품_호텔_개별상품_조회_로그인o_성공() throws Exception {
+
+        Long hotelId = 1L;
+        String email = "user@example.com";
+        HotelDTO.Response response = HotelDTO.Response.builder()
+          .id(hotelId)
+          .nation(request.getNation())
+          .name(request.getName())
+          .description(request.getDescription())
+          .thumbnails(null)
+          .notices(null)
+          .basicOptions(request.getBasicOptions())
+          .checkIn(request.getCheckIn())
+          .checkOut(request.getCheckOut())
+          .smokingRule(request.getSmokingRule())
+          .petRule(request.getPetRule())
+          .poolOpeningTime(request.getPoolOpeningTime())
+          .poolClosingTime(request.getPoolOpeningTime())
+          .activeStatus(request.getActiveStatus())
+          .latitude(null)
+          .longitude(null)
+          .rooms(null)
+          .isFavorite(true)
+          .build();
+
+        given(hotelService.findHotelByIdWithFavorite(email, hotelId))
+          .willReturn(response);
+
+        mockMvc.perform(get("/api/hotels/{hotelId}", hotelId)
+            .contentType(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.result.id").value(hotelId))
+          .andExpect(jsonPath("$.result.favorite").value(true));
 
     }
 
@@ -264,6 +329,12 @@ class HotelControllerTest {
 
         String name = "hotel";
         String nation = "PHILIPPINES";
+
+        SearchRequest searchRequest = new SearchRequest(SearchType.NAME_AND_NATION_ANONYMOUS);
+        searchRequest.setName(name);
+        searchRequest.setNation(Nation.valueOf(nation));
+        searchRequest.setPageable(PageRequest.of(0, 20));
+
         Page<HotelDTO.Response> mockResponse = new PageImpl<>(Collections.singletonList(
           HotelDTO.Response.builder()
             .id(1L)
@@ -285,17 +356,26 @@ class HotelControllerTest {
             .rooms(null)
             .build()));
 
-        given(hotelService.findHotelsByNameAndNationAndVisible(eq(name), any(Nation.class), any(Pageable.class)))
+        given(hotelService.searchCollection(any(SearchRequest.class)))
           .willReturn(mockResponse);
 
         mockMvc.perform(get("/api/hotels/")
             .param("name", name)
             .param("nation", nation)
             .contentType(MediaType.APPLICATION_JSON))
+          .andDo(print())
           .andExpect(status().isOk())
           .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.result.content[0].id").value(1L))
           .andExpect(jsonPath("$.result.content[0].name").value("hotelName"))
           .andExpect(jsonPath("$.result.content[0].nation").value(nation));
+
+        ArgumentCaptor<SearchRequest> searchRequestCaptor = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(hotelService).searchCollection(searchRequestCaptor.capture());
+
+        SearchRequest capturedRequest = searchRequestCaptor.getValue();
+        assertEquals(name, capturedRequest.getName());
+        assertEquals(Nation.valueOf(nation), capturedRequest.getNation());
 
     }
 
@@ -306,6 +386,12 @@ class HotelControllerTest {
         String nation = "PHILIPPINES";
         String roomType = "TWIN";
         String viewType = "OCEAN";
+
+        SearchRequest searchRequest = new SearchRequest(SearchType.SEARCH_ANONYMOUS);
+        searchRequest.setNation(Nation.valueOf(nation));
+        searchRequest.setRoomType(RoomType.valueOf(roomType));
+        searchRequest.setViewType(ViewType.valueOf(viewType));
+        searchRequest.setPageable(PageRequest.of(0, 20));
 
         Page<HotelDTO.Response> mockResponse = new PageImpl<>(Collections.singletonList(
           HotelDTO.Response.builder()
@@ -328,9 +414,7 @@ class HotelControllerTest {
             .rooms(rooms)
             .build()));
 
-        given(hotelService
-          .findHotelsByNationAndTypeAndVisible(
-            any(Nation.class), any(RoomType.class), any(ViewType.class), any(Pageable.class)))
+        given(hotelService.searchCollection(any(SearchRequest.class)))
           .willReturn(mockResponse);
 
         mockMvc.perform(get("/api/hotels/search/")
@@ -338,6 +422,7 @@ class HotelControllerTest {
             .param("roomType", roomType)
             .param("viewType", viewType)
             .contentType(MediaType.APPLICATION_JSON))
+          .andDo(print())
           .andExpect(status().isOk())
           .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
           .andExpect(jsonPath("$.result.content[0].id").value(1L))
@@ -345,12 +430,13 @@ class HotelControllerTest {
           .andExpect(jsonPath("$.result.content[0].rooms[0].type").value(roomType))
           .andExpect(jsonPath("$.result.content[0].rooms[0].view_type").value(viewType));
 
-        verify(hotelService)
-          .findHotelsByNationAndTypeAndVisible(
-            Nation.valueOf(nation),
-            RoomType.valueOf(roomType),
-            ViewType.valueOf(viewType),
-            PageRequest.of(0, 20));
+        ArgumentCaptor<SearchRequest> searchRequestCaptor = ArgumentCaptor.forClass(SearchRequest.class);
+        verify(hotelService).searchCollection(searchRequestCaptor.capture());
+
+        SearchRequest capturedRequest = searchRequestCaptor.getValue();
+        assertEquals(Nation.valueOf(nation), capturedRequest.getNation());
+        assertEquals(RoomType.valueOf(roomType), capturedRequest.getRoomType());
+        assertEquals(ViewType.valueOf(viewType), capturedRequest.getViewType());
 
     }
 
@@ -410,19 +496,27 @@ class HotelControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "master@example.com")
+    @WithMockUser(roles = "MASTER", username = "master@example.com")
     public void 마스터_호텔_수정_데이터_성공() throws Exception {
 
         Long hotelId = 1L;
+        String email = "master@example.com";
+
+        Hotel hotel = hotelService.updateData(email, hotelId, request);
+
+        given(hotelService.updateData(email, hotelId, request))
+          .willReturn(hotel);
 
         mockMvc.perform(patch("/api/hotels/{hotelId}", hotelId)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
           .andDo(print())
-          .andExpect(status().isNoContent());
+          .andExpect(status().isAccepted())
+          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+          .andExpect(jsonPath("$.result.content[0].id").value(1L));
 
         verify(hotelService, times(1))
-          .updateData(anyString(), anyLong(), any(HotelDTO.Request.class));
+          .updateData("master@example.com", eq(hotelId), any(HotelDTO.Request.class));
 
     }
 
