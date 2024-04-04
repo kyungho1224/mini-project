@@ -49,7 +49,8 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "https://fe-7-mini-team4.vercel.app",
                 "http://127.0.0.1:5500/",
-                "https://main--triphotel.netlify.app/"
+                "https://main--triphotel.netlify.app",
+                "https://triphotel.netlify.app"
             ));
             config.setAllowCredentials(true);
             return config;
@@ -66,6 +67,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(request -> request
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/api/members/join", "/api/members/login", "/api/members/verify").permitAll()
                 .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/hotels/**").permitAll()
