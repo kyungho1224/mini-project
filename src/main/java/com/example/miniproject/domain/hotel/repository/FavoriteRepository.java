@@ -13,4 +13,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
     Page<Favorite> findAllByMemberId(Long memberId, Pageable pageable);
 
+    boolean existsByMemberIdAndHotelId(Long memberId, Long hotelId);
+
 }
