@@ -1,11 +1,9 @@
 package com.example.miniproject.domain.hotel.controller;
 
 import com.example.miniproject.domain.hotel.constant.*;
-import com.example.miniproject.domain.hotel.dto.BasicOptions;
-import com.example.miniproject.domain.hotel.dto.HotelDTO;
-import com.example.miniproject.domain.hotel.dto.RoomDTO;
-import com.example.miniproject.domain.hotel.dto.SearchRequest;
+import com.example.miniproject.domain.hotel.dto.*;
 import com.example.miniproject.domain.hotel.entity.Hotel;
+import com.example.miniproject.domain.hotel.entity.HotelThumbnail;
 import com.example.miniproject.domain.hotel.service.HotelService;
 import com.example.miniproject.domain.member.constant.MemberRole;
 import com.example.miniproject.domain.member.constant.MemberStatus;
@@ -41,7 +39,6 @@ import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -52,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("호텔 컨트롤러 테스트")
-@ActiveProfiles("test")
+@ActiveProfiles("default")
 @AutoConfigureMockMvc
 @Transactional
 @SpringBootTest
@@ -502,9 +499,7 @@ class HotelControllerTest {
         Long hotelId = 1L;
         String email = "master@example.com";
 
-        Hotel hotel = hotelService.updateData(email, hotelId, request);
-
-        given(hotelService.updateData(email, hotelId, request))
+        given(hotelService.updateData(eq(email), eq(hotelId), any(HotelDTO.Request.class)))
           .willReturn(hotel);
 
         mockMvc.perform(patch("/api/hotels/{hotelId}", hotelId)
@@ -512,11 +507,10 @@ class HotelControllerTest {
             .content(objectMapper.writeValueAsString(request)))
           .andDo(print())
           .andExpect(status().isAccepted())
-          .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-          .andExpect(jsonPath("$.result.content[0].id").value(1L));
+          .andExpect(jsonPath("$.result.name").value(request.getName()))
+          .andExpect(jsonPath("$.result.description").value(request.getDescription()));
 
-        verify(hotelService, times(1))
-          .updateData("master@example.com", eq(hotelId), any(HotelDTO.Request.class));
+        verify(hotelService).updateData(eq(email), eq(hotelId), any(HotelDTO.Request.class));
 
     }
 
@@ -545,6 +539,7 @@ class HotelControllerTest {
     public void 마스터_호텔_수정_이미지_성공() throws Exception {
 
         Long hotelId = 1L;
+        String email = "master@example.com";
         Long thumbnailId = 1L;
         String fileName = "test1.jpg";
         MockMultipartFile file = new MockMultipartFile(
@@ -552,6 +547,16 @@ class HotelControllerTest {
           fileName,
           "image/jpeg",
           "image content".getBytes(StandardCharsets.UTF_8));
+
+        ThumbnailDTO.HotelThumbnailsResponse response = ThumbnailDTO.HotelThumbnailsResponse
+          .of(HotelThumbnail.builder()
+            .hotel(hotel)
+            .imgUrl("http://example.com/test1.jpg")
+            .build());
+
+        given(hotelService.updateThumbnail(
+          eq(email), eq(hotelId), eq(thumbnailId), any(MultipartFile.class)))
+          .willReturn(response);
 
         mockMvc.perform(multipart("/api/hotels/{hotelId}/thumbnails/{thumbnailId}", hotelId, thumbnailId)
             .file(file)
@@ -561,12 +566,13 @@ class HotelControllerTest {
             .with(request -> {
                 request.setMethod("PATCH");
                 return request;
-            })
-          )
-          .andExpect(status().isNoContent());
+            }))
+          .andDo(print())
+          .andExpect(status().isAccepted())
+          .andExpect(jsonPath("$.result.img_url").value(response.getImgUrl()));
 
-        verify(hotelService, times(1))
-          .updateThumbnail(anyString(), anyLong(), anyLong(), any(MultipartFile.class));
+        verify(hotelService).updateThumbnail(
+          eq(email), eq(hotelId), eq(thumbnailId), any(MultipartFile.class));
 
     }
 
