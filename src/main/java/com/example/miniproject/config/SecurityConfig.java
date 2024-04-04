@@ -48,7 +48,8 @@ public class SecurityConfig {
             config.setAllowedOriginPatterns(List.of(
                 "http://localhost:3000",
                 "https://fe-7-mini-team4.vercel.app",
-                "http://127.0.0.1:5500/"
+                "http://127.0.0.1:5500/",
+                "https://main--triphotel.netlify.app/"
             ));
             config.setAllowCredentials(true);
             return config;
