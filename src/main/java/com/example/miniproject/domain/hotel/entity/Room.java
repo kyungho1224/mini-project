@@ -103,6 +103,10 @@ public class Room extends BaseEntity {
         thumbnails.add(thumbnail);
     }
 
+    public void removeAllThumbnail() {
+        thumbnails.clear();
+    }
+
     public void removeThumbnail(RoomThumbnail thumbnail) {
         thumbnails.remove(thumbnail);
     }

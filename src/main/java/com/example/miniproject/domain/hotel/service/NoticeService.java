@@ -21,18 +21,20 @@ public class NoticeService {
     private final HotelService hotelService;
     private final MemberService memberService;
 
-    public void create(String email, Long hotelId, NoticeDTO.Request request) {
+    public NoticeDTO.Response create(String email, Long hotelId, NoticeDTO.Request request) {
         Member master = memberService.getMasterMemberOrThrow(email);
         Hotel hotel = hotelService.getVisibleHotelOrThrow(hotelId);
         Notice savedNotice = noticeRepository.save(Notice.saveAs(master, hotel, request));
         hotel.addNotice(savedNotice);
+        return NoticeDTO.Response.of(savedNotice);
     }
 
-    public void update(String email, Long hotelId, Long noticeId, NoticeDTO.Request request) {
+    public NoticeDTO.Response update(String email, Long hotelId, Long noticeId, NoticeDTO.Request request) {
         memberService.getMasterMemberOrThrow(email);
         hotelService.getVisibleHotelOrThrow(hotelId);
         Notice notice = getNoticeOrThrow(noticeId);
         notice.update(request);
+        return NoticeDTO.Response.of(notice);
     }
 
     public void delete(String email, Long hotelId, Long noticeId) {
