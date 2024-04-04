@@ -47,7 +47,7 @@ jobs:
       - name: Docker Build & Push
         run: |
           docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build --platform linux/amd64 -t ${{ secrets.DOCKER_REPO }}
+          docker build --platform linux/amd64 -t ${{ secrets.DOCKER_REPO }} .
           docker push ${{ secrets.DOCKER_REPO }}
 
       - name: SSH Connection & Deploy
