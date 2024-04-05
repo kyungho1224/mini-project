@@ -10,4 +10,3 @@ services:
       options:
         max-size: "10m"
         max-file: "10"
-        path: "/home/ubuntu/compose/logs/mini-project-log.log"
