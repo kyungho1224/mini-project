@@ -5,3 +5,9 @@ services:
       - "8080:8080"
     container_name: mini-project
     image: be7kimkyungho/mini-project:latest
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "10"
+        path: "/home/ubuntu/compose/logs/mini-project-log.log"
